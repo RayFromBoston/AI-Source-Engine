@@ -76,6 +76,7 @@ python3 -m unittest discover -s tests -v
 - `al10 make-receipt`
 - `al10 serve-api`
 - `al10 bench-smoke`
+- `al10 train ...` (training ingest/stamping MVP commands)
 
 ## Documentation
 
@@ -86,6 +87,7 @@ python3 -m unittest discover -s tests -v
 - `docs/e2e-app.md`
 - `docs/quality-and-ci.md`
 - `docs/release-and-packaging.md`
+- `docs/training-ingest-mvp.md`
 
 ## Repository layout
 

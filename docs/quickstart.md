@@ -92,3 +92,11 @@ python3 -m al10.cli serve-api --host 127.0.0.1 --port 8765 --api-key demo-key --
 ```bash
 PYTHONPATH=src python3 examples/e2e_http_app.py
 ```
+
+## 10) Run training ingest MVP flow
+
+See:
+
+- `docs/training-ingest-mvp.md`
+
+for the `al10 train` end-to-end stamping/packing/validation command sequence.

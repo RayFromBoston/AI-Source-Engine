@@ -14,6 +14,20 @@ from .receipt import aggregate_decode_step
 from .registry import SourceRegistry, build_training_manifest
 from .scaffold import write_scaffold
 from .server import build_receipt_from_payload, create_demo_receipt, serve
+from .train import (
+    SimpleWhitespaceTokenizer,
+    build_source_report,
+    build_training_manifest_with_hashes,
+    invert_index_table,
+    load_index_table,
+    pack_tokenized_rows,
+    read_jsonl,
+    save_index_table,
+    stamp_corpus_rows,
+    tokenize_stamped_rows,
+    validate_training_rows,
+    write_jsonl,
+)
 from .validate import validate_manifest_hash, validate_receipt_file, validate_registry_file
 from .version import __version__
 
@@ -188,6 +202,115 @@ def cmd_bench_smoke(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_train_registry_index(args: argparse.Namespace) -> int:
+    registry = SourceRegistry.from_jsonl(args.registry)
+    idx_to_source = registry.build_index_table(
+        include_special=not args.no_special,
+        include_parametric=not args.no_parametric,
+        include_model_output=not args.no_model_output,
+    )
+
+    ensure_source_ids = list(args.ensure_source_id or [])
+    for source_id in ensure_source_ids:
+        if source_id in idx_to_source.values():
+            continue
+        positive_indices = [idx for idx in idx_to_source.keys() if idx >= 0]
+        next_idx = (max(positive_indices) + 1) if positive_indices else 1
+        idx_to_source[next_idx] = str(source_id)
+
+    save_index_table(args.output, idx_to_source)
+    print(
+        json.dumps(
+            {
+                "ok": True,
+                "output": args.output,
+                "rows": len(idx_to_source),
+            }
+        )
+    )
+    return 0
+
+
+def cmd_train_stamp(args: argparse.Namespace) -> int:
+    rows = read_jsonl(args.input)
+    idx_to_source = load_index_table(args.index_table)
+    source_to_idx = invert_index_table(idx_to_source)
+
+    stamped = stamp_corpus_rows(
+        rows,
+        text_field=args.text_field,
+        source_id_field=args.source_id_field,
+        default_source_id=args.default_source_id,
+    )
+    tokenized = tokenize_stamped_rows(
+        stamped,
+        source_to_idx=source_to_idx,
+        tokenizer=SimpleWhitespaceTokenizer(),
+        drop_empty=not args.keep_empty,
+    )
+    write_jsonl(args.output, tokenized)
+
+    total_tokens = sum(int(row["token_count"]) for row in tokenized)
+    print(
+        json.dumps(
+            {
+                "ok": True,
+                "rows": len(tokenized),
+                "tokens": total_tokens,
+                "output": args.output,
+                "tokenizer": SimpleWhitespaceTokenizer.name,
+            }
+        )
+    )
+    return 0
+
+
+def cmd_train_pack(args: argparse.Namespace) -> int:
+    rows = read_jsonl(args.input)
+    packed = pack_tokenized_rows(
+        rows,
+        sequence_length=args.sequence_length,
+        drop_remainder=args.drop_remainder,
+        include_labels=args.include_labels,
+    )
+    write_jsonl(args.output, packed)
+    total_tokens = sum(int(row["token_count"]) for row in packed)
+    print(json.dumps({"ok": True, "rows": len(packed), "tokens": total_tokens, "output": args.output}))
+    return 0
+
+
+def cmd_train_validate(args: argparse.Namespace) -> int:
+    rows = read_jsonl(args.input)
+    report = validate_training_rows(rows)
+    if args.report_output:
+        Path(args.report_output).write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+    print(json.dumps(report, sort_keys=True))
+    return 0
+
+
+def cmd_train_manifest_build(args: argparse.Namespace) -> int:
+    manifest = build_training_manifest_with_hashes(
+        run_id=args.run_id,
+        registry_manifest_hash=args.registry_manifest_hash,
+        shard_paths=list(args.shard),
+    )
+    Path(args.output).write_text(json.dumps(manifest, indent=2, sort_keys=True), encoding="utf-8")
+    print(json.dumps({"ok": True, "output": args.output, "manifest_hash": manifest["manifest_hash"]}))
+    return 0
+
+
+def cmd_train_report(args: argparse.Namespace) -> int:
+    rows = read_jsonl(args.input)
+    summary = validate_training_rows(rows)
+    idx_to_source = load_index_table(args.index_table) if args.index_table else None
+    source_report = build_source_report(summary, idx_to_source)
+    payload = {"ok": True, "summary": summary, "source_report": source_report}
+    if args.output:
+        Path(args.output).write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+    print(json.dumps(payload, sort_keys=True))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="al10", description="AL-1.0 starter toolkit")
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
@@ -248,6 +371,58 @@ def build_parser() -> argparse.ArgumentParser:
     bench.add_argument("--heads", type=int, default=32)
     bench.add_argument("--key-len", type=int, default=1024)
     bench.set_defaults(func=cmd_bench_smoke)
+
+    train = subparsers.add_parser("train", help="Training ingest and provenance tooling")
+    train_subparsers = train.add_subparsers(dest="train_command", required=True)
+
+    train_registry_index = train_subparsers.add_parser(
+        "registry-index", help="Export source_idx -> source_id table from registry"
+    )
+    train_registry_index.add_argument("--registry", required=True, help="Path to registry JSONL")
+    train_registry_index.add_argument("--output", required=True, help="Path to index table JSON")
+    train_registry_index.add_argument("--ensure-source-id", action="append", default=[])
+    train_registry_index.add_argument("--no-special", action="store_true")
+    train_registry_index.add_argument("--no-parametric", action="store_true")
+    train_registry_index.add_argument("--no-model-output", action="store_true")
+    train_registry_index.set_defaults(func=cmd_train_registry_index)
+
+    train_stamp = train_subparsers.add_parser(
+        "stamp", help="Stamp corpus rows with source_idx and tokenize to training rows"
+    )
+    train_stamp.add_argument("--input", required=True, help="Input JSONL with text/source fields")
+    train_stamp.add_argument("--output", required=True, help="Output JSONL with input_ids/source_idx")
+    train_stamp.add_argument("--index-table", required=True, help="Path to source index table JSON")
+    train_stamp.add_argument("--text-field", default="text")
+    train_stamp.add_argument("--source-id-field", default="source_id")
+    train_stamp.add_argument("--default-source-id")
+    train_stamp.add_argument("--keep-empty", action="store_true")
+    train_stamp.set_defaults(func=cmd_train_stamp)
+
+    train_pack = train_subparsers.add_parser("pack", help="Pack tokenized rows to fixed sequence length")
+    train_pack.add_argument("--input", required=True)
+    train_pack.add_argument("--output", required=True)
+    train_pack.add_argument("--sequence-length", type=int, required=True)
+    train_pack.add_argument("--drop-remainder", action="store_true")
+    train_pack.add_argument("--include-labels", action="store_true")
+    train_pack.set_defaults(func=cmd_train_pack)
+
+    train_validate = train_subparsers.add_parser("validate", help="Validate training row invariants")
+    train_validate.add_argument("--input", required=True)
+    train_validate.add_argument("--report-output")
+    train_validate.set_defaults(func=cmd_train_validate)
+
+    train_manifest = train_subparsers.add_parser("manifest-build", help="Build training manifest with shard hashes")
+    train_manifest.add_argument("--run-id", required=True)
+    train_manifest.add_argument("--registry-manifest-hash", required=True)
+    train_manifest.add_argument("--shard", required=True, action="append")
+    train_manifest.add_argument("--output", required=True)
+    train_manifest.set_defaults(func=cmd_train_manifest_build)
+
+    train_report = train_subparsers.add_parser("report", help="Generate source distribution report")
+    train_report.add_argument("--input", required=True)
+    train_report.add_argument("--index-table")
+    train_report.add_argument("--output")
+    train_report.set_defaults(func=cmd_train_report)
 
     return parser
 
