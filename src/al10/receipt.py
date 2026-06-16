@@ -1,11 +1,13 @@
-"""Receipt generation utilities for AL-1.0 style attribution output."""
+"""Receipt generation utilities for AL-1.0 attribution output."""
 
 from __future__ import annotations
 
 from collections import defaultdict
 from typing import Dict, Mapping, Optional, Sequence
 
+from .errors import AL10ValidationError
 from .math import merge_query_heads, source_bucket
+from .models import AttributionReceipt, ReceiptSource
 
 MODEL_OUTPUT_SOURCE_IDX = -2
 PARAMETRIC_SOURCE_ID = "PARAMETRIC"
@@ -49,7 +51,7 @@ def response_ratio(per_step_buckets: Sequence[Mapping[int, float]]) -> Dict[int,
     return {source_idx: ratio / total_ratio for source_idx, ratio in ratios.items()}
 
 
-def build_receipt(
+def build_receipt_model(
     per_step_buckets: Sequence[Mapping[int, float]],
     idx_to_source_id: Mapping[int, str],
     *,
@@ -60,7 +62,7 @@ def build_receipt(
     collapse_model_output: bool = True,
     min_ratio: float = 0.0,
     source_labels: Optional[Mapping[str, str]] = None,
-) -> dict:
+) -> AttributionReceipt:
     """
     Build an AL-1.0-like attribution receipt JSON object.
 
@@ -75,6 +77,9 @@ def build_receipt(
         min_ratio: Optional UI floor; sources below threshold are dropped then renormalized.
         source_labels: Optional map[source_id] -> human-readable label.
     """
+    if min_ratio < 0 or min_ratio >= 1:
+        raise AL10ValidationError("min_ratio must be within [0, 1)")
+
     ratios = response_ratio(per_step_buckets)
 
     if collapse_model_output and MODEL_OUTPUT_SOURCE_IDX in ratios:
@@ -82,34 +87,65 @@ def build_receipt(
         parametric_idx = _parametric_idx(idx_to_source_id)
         ratios[parametric_idx] = ratios.get(parametric_idx, 0.0) + model_output_mass
 
-    source_rows = []
+    source_rows: list[ReceiptSource] = []
     for source_idx, ratio in ratios.items():
         source_id = idx_to_source_id.get(source_idx, PARAMETRIC_SOURCE_ID)
         if ratio < min_ratio:
             continue
-        row = {"source_id": source_id, "ratio": float(ratio)}
-        if source_labels and source_id in source_labels:
-            row["label"] = source_labels[source_id]
-        source_rows.append(row)
+        source_rows.append(
+            ReceiptSource(
+                source_id=source_id,
+                ratio=float(ratio),
+                label=(source_labels.get(source_id) if source_labels else None),
+            )
+        )
 
     if not source_rows:
-        raise ValueError("all sources were filtered out by min_ratio")
+        raise AL10ValidationError("all sources were filtered out by min_ratio")
 
-    denom = sum(row["ratio"] for row in source_rows)
+    denom = sum(row.ratio for row in source_rows)
     for row in source_rows:
-        row["ratio"] = row["ratio"] / denom
+        row.ratio = row.ratio / denom
 
-    source_rows.sort(key=lambda row: row["ratio"], reverse=True)
+    source_rows.sort(key=lambda row: row.ratio, reverse=True)
 
-    return {
-        "receipt_spec": "AL-1.0",
-        "model_id": model_id,
-        "registry_manifest_hash": registry_manifest_hash,
-        "training_manifest_hash": training_manifest_hash,
-        "generated_token_count": len(per_step_buckets),
-        "layer_policy": layer_policy,
-        "sources": source_rows,
-    }
+    receipt = AttributionReceipt(
+        receipt_spec="AL-1.0",
+        model_id=model_id,
+        registry_manifest_hash=registry_manifest_hash,
+        training_manifest_hash=training_manifest_hash,
+        generated_token_count=len(per_step_buckets),
+        layer_policy=layer_policy,
+        sources=source_rows,
+    )
+    receipt.validate()
+    return receipt
+
+
+def build_receipt(
+    per_step_buckets: Sequence[Mapping[int, float]],
+    idx_to_source_id: Mapping[int, str],
+    *,
+    model_id: str,
+    registry_manifest_hash: str,
+    training_manifest_hash: str,
+    layer_policy: str = "last_block_self_attn_mean_heads",
+    collapse_model_output: bool = True,
+    min_ratio: float = 0.0,
+    source_labels: Optional[Mapping[str, str]] = None,
+) -> dict:
+    """Build a JSON-serializable receipt dictionary."""
+    return build_receipt_model(
+        per_step_buckets,
+        idx_to_source_id,
+        model_id=model_id,
+        registry_manifest_hash=registry_manifest_hash,
+        training_manifest_hash=training_manifest_hash,
+        layer_policy=layer_policy,
+        collapse_model_output=collapse_model_output,
+        min_ratio=min_ratio,
+        source_labels=source_labels,
+    ).to_dict()
 
 
 def _parametric_idx(idx_to_source_id: Mapping[int, str]) -> int:

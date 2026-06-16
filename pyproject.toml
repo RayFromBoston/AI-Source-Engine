@@ -5,12 +5,18 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ai-source-engine"
 version = "0.1.0"
-description = "Reference AL-1.0 attribution math and receipt generation."
+description = "Plug-and-play AL-1.0 attribution SDK, adapters, and CLI."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "Ray David Crowell" }]
 dependencies = []
+
+[project.optional-dependencies]
+hf = ["transformers", "torch"]
+
+[project.scripts]
+al10 = "al10.cli:main"
 
 [tool.setuptools]
 package-dir = { "" = "src" }

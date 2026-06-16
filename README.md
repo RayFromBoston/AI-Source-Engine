@@ -1,42 +1,86 @@
-# AI Source Engine (AL-1.0 Starter)
+# AI Source Engine (AL-1.0 Plug-and-Play Starter)
 
-This repository now contains a practical, minimal implementation of the AL-1.0
-attribution math described in *We All Die in the Dark*.
+This project is a practical AL-1.0 starter kit for people who want to:
 
-It focuses on the implementation core:
+1. experiment with attribution receipts quickly,
+2. integrate decode-step attribution into existing generation code, and
+3. ship a stable JSON receipt format with invariants and validation checks.
 
-- per-head attention merge
-- source-bucket logging vector `L`
-- full-response source ratio computation
-- JSON-ready attribution receipt output
+It includes:
+
+- a hardened core SDK (`al10`)
+- framework adapters (base, PyTorch, Hugging Face wrapper)
+- CLI tools for registry/dataset/validation workflows
+- tests and integration scaffolds
 
 ## Install
 
-```bash
-python -m pip install -e .
-```
-
-## Run tests
+Base package:
 
 ```bash
-python -m unittest discover -s tests -v
+python3 -m pip install -e .
 ```
 
-## Quick example
+Hugging Face helper extras:
 
 ```bash
-python examples/minimal_receipt.py
+python3 -m pip install -e ".[hf]"
 ```
 
-## What's included
+## Quick start
 
-- `src/al10/math.py` - Step 5 math utilities
-- `src/al10/receipt.py` - decode-step aggregation and final receipt builder
-- `docs/engineering-guide.md` - implementation notes and integration guidance
-- `tests/` - unit tests for invariants and receipt behavior
+Run the built-in demo:
 
-## Scope
+```bash
+al10 run-demo
+```
 
-This code is framework-agnostic and intentionally lightweight. It does **not**
-replace your model architecture. It gives you a direct implementation target for
-the post-softmax logging path and receipt emission pipeline.
+Create a starter plugin scaffold:
+
+```bash
+al10 init-plugin --framework pytorch
+```
+
+Run tests:
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+## Core API surface
+
+- `SourceRegistry`: source rows + deterministic manifest hash
+- `SourceTagSidecar`: KV-aligned source index tracking
+- `DecodeStepLogger`: decode-step bucket collection and receipt finalization
+- `build_receipt(...)`: AL-1.0 JSON receipt generation
+- `validate_receipt_file(...)`: invariant/schema checks
+
+## Adapters
+
+- `BaseAL10Adapter`: generic lifecycle
+  - `start_trace(context_source_idx)`
+  - `log_decode_step(alpha_per_head)`
+  - `finalize_receipt(...)`
+- `PyTorchDecodeAdapter`: logs from tensor-shaped attention outputs
+- `HuggingFaceGenerateAdapter`: wraps `model.generate(...)` for quick experiments
+
+## CLI commands
+
+- `al10 init-registry`
+- `al10 stamp-dataset`
+- `al10 run-demo`
+- `al10 validate-receipt`
+- `al10 validate-manifests`
+- `al10 init-plugin`
+
+## Documentation
+
+- `docs/quickstart.md`
+- `docs/integrations.md`
+- `docs/engineering-guide.md`
+
+## Repository layout
+
+- `src/al10/` - SDK, adapters, CLI, validators, scaffolding
+- `examples/` - runnable examples
+- `tests/` - unit tests and command coverage

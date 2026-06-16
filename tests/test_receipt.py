@@ -9,6 +9,7 @@ from al10.receipt import (
     MODEL_OUTPUT_SOURCE_IDX,
     aggregate_decode_step,
     build_receipt,
+    build_receipt_model,
     response_ratio,
 )
 
@@ -68,6 +69,19 @@ class TestAL10Receipt(unittest.TestCase):
         self.assertAlmostEqual(buckets[1], 0.6)
         self.assertAlmostEqual(buckets[2], 0.25)
         self.assertAlmostEqual(buckets[-1], 0.15)
+
+    def test_build_receipt_model_validates_sum(self) -> None:
+        per_step = [{1: 0.5, 2: 0.5}]
+        idx_to_source_id = {1: "sha256:a", 2: "sha256:b"}
+        receipt = build_receipt_model(
+            per_step,
+            idx_to_source_id,
+            model_id="org/model@r1",
+            registry_manifest_hash="sha256:registry",
+            training_manifest_hash="sha256:training",
+        )
+        self.assertEqual(receipt.receipt_spec, "AL-1.0")
+        self.assertAlmostEqual(sum(item.ratio for item in receipt.sources), 1.0)
 
 
 if __name__ == "__main__":

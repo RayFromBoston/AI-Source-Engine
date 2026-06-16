@@ -1,0 +1,62 @@
+# Quickstart (10 minutes)
+
+## 1) Install
+
+```bash
+python3 -m pip install -e .
+```
+
+For Hugging Face helper support:
+
+```bash
+python3 -m pip install -e ".[hf]"
+```
+
+## 2) Run demo receipt
+
+```bash
+al10 run-demo
+```
+
+This prints an AL-1.0 receipt JSON with normalized source ratios.
+
+## 3) Create a source registry row
+
+```bash
+al10 init-registry \
+  --output registry.jsonl \
+  --source-id sha256:source-a \
+  --content-hash sha256:content-a \
+  --uri https://example.com/a \
+  --rightsholder-id entity:a
+```
+
+The command writes `registry.jsonl` and returns a deterministic
+`registry_manifest_hash`.
+
+## 4) Validate a receipt
+
+```bash
+al10 validate-receipt path/to/receipt.json
+```
+
+Validation checks:
+
+- required fields exist
+- source rows are well-formed
+- ratios sum to ~1.0
+- top-level AL-1.0 metadata is present
+
+## 5) Scaffold an integration snippet
+
+```bash
+al10 init-plugin --framework pytorch
+```
+
+or:
+
+```bash
+al10 init-plugin --framework hf
+```
+
+This creates starter code that follows the adapter lifecycle.
