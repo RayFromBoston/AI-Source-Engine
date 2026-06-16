@@ -92,6 +92,11 @@ python3 -m unittest discover -s tests -v
 - `docs/production-hardening.md`
 - `docs/first-adopter-checklist.md`
 
+## Open letter and signatories
+
+- `OPEN_LETTER.md`
+- `SIGNATORIES.md` (supports "sign by pull request")
+
 ## Repository layout
 
 - `src/al10/` - SDK, adapters, CLI, validators, scaffolding
