@@ -4,6 +4,12 @@ This is the technical entry point for using this repository.
 
 If you arrived from the Open Letter in `README.md`, start here.
 
+## Full system reference
+
+For a complete explanation of both the Open Letter/signatory system and the technical AL-1.0 stack:
+
+- `COMPLETE_REFERENCE.md`
+
 ## Core reference documents on `main`
 
 In addition to this implementation guide, the project context references:

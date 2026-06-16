@@ -3,6 +3,8 @@
 > **Technical users:** go to `START_HERE.md` first.
 >
 > If you are looking for setup, commands, SDK usage, and integration docs, start there.
+>
+> For the full map of both parts (open letter/signatures + technical stack): `COMPLETE_REFERENCE.md`.
 
 Generative AI is currently driving toward a dual-threat crisis that threatens both the creator economy and the psychological autonomy of vulnerable users. The industry treats these as separate issues - one as a legal dispute over copyright, the other as an alignment or "safety" problem.
 
