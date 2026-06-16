@@ -21,6 +21,51 @@ The AI industry claims that attributing human creators and anchoring model outpu
 
 The capability to track citation vectors already exists. The AL-1.0 (Attribution Logging) specification - open-sourced as the AI-Source-Engine - proves that by expanding the fundamental attention mechanism, models can generate an exact mathematical receipt of human contribution. By logging attention weights (alpha) at decode, we can track source dependency with less than 1% operational overhead at inference.
 
+## How the solution works in plain English
+
+Modern transformer models already run Q/K/V attention on every generated token.
+
+- **Q (Query)** is what the model is trying to answer right now.
+- **K (Key)** is the lookup index for prior context positions.
+- **V (Value)** is the content retrieved from those positions.
+
+Those models already compute attention weights that say how much each prior position influenced the next token.
+
+AL-1.0 adds one simple layer on top of that existing process:
+
+1. keep a source identity tag (`source_idx`) attached to each relevant position,
+2. use the attention weights the model already computed,
+3. group those weights by source identity,
+4. normalize into final source influence ratios.
+
+That is why the compute cost is low. We are not asking for a second giant model pass. We are reusing existing attention behavior and adding lightweight attribution bookkeeping plus final aggregation into a receipt.
+
+## What is available right now (two concrete system parts)
+
+This project already ships both parts needed to make attribution practical.
+
+### 1) Training-side plug-in path (add source vectors)
+
+This is the side that tags data during ingest so provenance survives preprocessing.
+
+- it stamps/aligns `source_idx` with tokenized training rows,
+- it keeps `input_ids` and `source_idx` aligned,
+- it validates that alignment so provenance integrity is not silently lost.
+
+In plain terms: this part makes sure the source vector is present in training data where it matters.
+
+### 2) Inference-side receipt path (compute source ratios at the end)
+
+This is the side that runs at generation time and outputs attribution ratios.
+
+- it reads decode-step attention signals,
+- buckets influence by source identity,
+- produces a receipt showing which sources influenced the response and by how much.
+
+In plain terms: this part turns model behavior into a usable attribution receipt for auditing.
+
+Together, these two parts solve the core argument in one line: provenance should be structurally built into training and output, not patched with after-the-fact claims.
+
 We do not have to choose between technological progress and human autonomy. We, the undersigned creators, engineers, researchers, and citizens, demand the following:
 
 1. **Mandate Attribution Logging**
