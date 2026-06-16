@@ -1,4 +1,4 @@
-# An Open Letter to AI Regulators and Foundation Model Creators: End the Black Box
+# The Open Letter to Save Civilization: To Lawmakers, Regulators, and Foundation Model Creators
 
 > **Technical users:** go to `START_HERE.md` first.
 >
