@@ -1,5 +1,6 @@
 # The Open Letter to Save Civilization: To Lawmakers, Regulators, and Foundation Model Creators
 
+
 Generative AI is currently driving toward a dual-threat crisis that threatens both the creator economy and the psychological autonomy of vulnerable users. The industry treats these as separate issues - one as a legal dispute over copyright, the other as an alignment or "safety" problem.
 
 They are not separate. They are symptoms of the exact same architectural flaw, and they must be solved together.
