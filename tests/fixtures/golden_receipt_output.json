@@ -1,0 +1,13 @@
+{
+  "receipt_spec": "AL-1.0",
+  "model_id": "golden/model@r1",
+  "registry_manifest_hash": "sha256:registry-golden",
+  "training_manifest_hash": "sha256:training-golden",
+  "generated_token_count": 2,
+  "layer_policy": "last_block_self_attn_mean_heads",
+  "sources": [
+    { "source_id": "sha256:source-a", "ratio": 0.6 },
+    { "source_id": "sha256:source-b", "ratio": 0.25 },
+    { "source_id": "PARAMETRIC", "ratio": 0.15000000000000002 }
+  ]
+}

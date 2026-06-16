@@ -1,0 +1,116 @@
+import pathlib
+import sys
+import tempfile
+import unittest
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
+
+from al10.train import (
+    build_tokenizer,
+    build_training_manifest_with_hashes,
+    invert_index_table,
+    iter_packed_tokenized_rows,
+    pack_tokenized_rows,
+    shard_rows,
+    stamp_corpus_rows,
+    tokenize_stamped_rows,
+    validate_training_rows,
+    write_jsonl,
+)
+
+
+class TestTrainPipeline(unittest.TestCase):
+    def test_stamp_and_tokenize_alignment(self) -> None:
+        idx_to_source = {1: "sha256:source-a", 2: "UNLICENSED_UNKNOWN"}
+        source_to_idx = invert_index_table(idx_to_source)
+
+        rows = [
+            {"text": "hello world", "source_id": "sha256:source-a"},
+            {"text": "fallback source row"},
+        ]
+        stamped = stamp_corpus_rows(rows, default_source_id="UNLICENSED_UNKNOWN")
+        tokenized = tokenize_stamped_rows(stamped, source_to_idx=source_to_idx)
+        self.assertEqual(len(tokenized), 2)
+        for row in tokenized:
+            self.assertEqual(len(row["input_ids"]), len(row["source_idx"]))
+
+    def test_pack_and_validate(self) -> None:
+        rows = [
+            {"row_id": 1, "source_id": "sha256:source-a", "input_ids": [1, 2, 3], "source_idx": [1, 1, 1]},
+            {"row_id": 2, "source_id": "sha256:source-b", "input_ids": [4, 5], "source_idx": [2, 2]},
+        ]
+        packed = pack_tokenized_rows(rows, sequence_length=2, include_labels=True)
+        self.assertGreaterEqual(len(packed), 2)
+        for row in packed:
+            self.assertEqual(len(row["input_ids"]), len(row["source_idx"]))
+            self.assertEqual(row["labels"], row["input_ids"])
+
+        report = validate_training_rows(packed)
+        self.assertTrue(report["ok"])
+        self.assertGreater(report["tokens"], 0)
+
+    def test_manifest_with_hashes(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            shard_path = pathlib.Path(temp_dir) / "packed.jsonl"
+            write_jsonl(shard_path, [{"input_ids": [1, 2], "source_idx": [1, 1], "token_count": 2}])
+            manifest = build_training_manifest_with_hashes(
+                run_id="run-1",
+                registry_manifest_hash="sha256:registry",
+                shard_paths=[str(shard_path)],
+            )
+            self.assertIn("manifest_hash", manifest)
+            self.assertIn("shard_hashes", manifest)
+            self.assertIn(str(shard_path), manifest["shard_hashes"])
+
+    def test_shard_rows(self) -> None:
+        rows = [{"i": i} for i in range(5)]
+        shards = shard_rows(rows, rows_per_shard=2)
+        self.assertEqual(len(shards), 3)
+        self.assertEqual(len(shards[0]), 2)
+        self.assertEqual(len(shards[-1]), 1)
+
+    def test_build_tokenizer_simple(self) -> None:
+        tokenizer = build_tokenizer(backend="simple")
+        tokens = tokenizer.encode("hello world")
+        self.assertGreaterEqual(len(tokens), 2)
+
+    def test_build_tokenizer_hf_requires_name(self) -> None:
+        with self.assertRaises(ValueError):
+            _ = build_tokenizer(backend="hf")
+
+    def test_unknown_source_policy_fallback_and_skip(self) -> None:
+        source_to_idx = {"KNOWN": 1, "UNLICENSED_UNKNOWN": 2}
+        rows = [
+            {"row_id": 1, "text": "known row", "source_id": "KNOWN"},
+            {"row_id": 2, "text": "unknown row", "source_id": "OTHER"},
+        ]
+
+        fallback_rows = tokenize_stamped_rows(
+            rows,
+            source_to_idx=source_to_idx,
+            unknown_source_policy="fallback",
+            fallback_source_id="UNLICENSED_UNKNOWN",
+        )
+        self.assertEqual(len(fallback_rows), 2)
+        self.assertEqual(set(fallback_rows[1]["source_idx"]), {2})
+
+        skipped_rows = tokenize_stamped_rows(
+            rows,
+            source_to_idx=source_to_idx,
+            unknown_source_policy="skip",
+        )
+        self.assertEqual(len(skipped_rows), 1)
+
+    def test_iter_packed_tokenized_rows(self) -> None:
+        rows = [
+            {"input_ids": [1, 2, 3], "source_idx": [1, 1, 1]},
+            {"input_ids": [4, 5], "source_idx": [2, 2]},
+        ]
+        packed = list(iter_packed_tokenized_rows(rows, sequence_length=2, include_labels=True))
+        self.assertGreaterEqual(len(packed), 2)
+        for row in packed:
+            self.assertEqual(len(row["input_ids"]), len(row["source_idx"]))
+
+
+if __name__ == "__main__":
+    unittest.main()
