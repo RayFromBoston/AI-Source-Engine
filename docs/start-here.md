@@ -4,6 +4,15 @@ This guide is the technical entry point for using the repository.
 
 If you arrived from the Open Letter in `README.md`, start here.
 
+## Core reference documents on `main`
+
+In addition to this implementation guide, the project context references:
+
+- *The AGI Safety Bible*
+- *We All Die in the Dark*
+
+These are maintained on the `main` branch as core narrative/reference materials.
+
 ## What this project is
 
 AI Source Engine is a practical AL-1.0 starter kit for people who want to:
@@ -101,7 +110,7 @@ python3 -m unittest discover -s tests -v
 ## Signatories and open letter resources
 
 - `README.md` (public Open Letter landing page)
-- `OPEN_LETTER.md` (letter copy)
+- `OPEN_LETTER.md` (canonical pointer to README letter)
 - `SIGNATORIES.md` (supports "sign by pull request")
 
 ## Repository layout
