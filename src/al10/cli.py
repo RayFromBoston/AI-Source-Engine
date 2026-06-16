@@ -346,6 +346,231 @@ def cmd_train_report(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_train_init_config(args: argparse.Namespace) -> int:
+    template = {
+        "registry": {
+            "path": "registry.jsonl",
+            "index_output": "source_index_table.json",
+            "ensure_source_id": ["UNLICENSED_UNKNOWN"],
+            "no_special": False,
+            "no_parametric": False,
+            "no_model_output": False,
+        },
+        "stamp": {
+            "input": "corpus.jsonl",
+            "output": "stamped.jsonl",
+            "text_field": "text",
+            "source_id_field": "source_id",
+            "default_source_id": "UNLICENSED_UNKNOWN",
+            "keep_empty": False,
+            "tokenizer": {
+                "backend": "simple",
+                "name": None,
+                "trust_remote_code": False,
+                "use_fast": True,
+                "add_special_tokens": False,
+            },
+        },
+        "pack": {
+            "sequence_length": 2048,
+            "drop_remainder": False,
+            "include_labels": True,
+            "output": "packed.jsonl",
+            "output_dir": None,
+            "rows_per_shard": 1000,
+            "shard_prefix": "packed",
+        },
+        "validate": {"report_output": "validate_report.json"},
+        "manifest": {
+            "run_id": "run-001",
+            "registry_manifest_hash": "auto",
+            "output": "training_manifest.json",
+            "shards": [],
+        },
+        "report": {"enabled": True, "output": "source_report.json"},
+    }
+    output = Path(args.output)
+    output.write_text(json.dumps(template, indent=2, sort_keys=True), encoding="utf-8")
+    print(json.dumps({"ok": True, "output": str(output)}))
+    return 0
+
+
+def _resolve_config_path(raw: str | None, *, base_dir: Path, default_name: str | None = None) -> Path:
+    value = raw or default_name
+    if not value:
+        raise ValueError("path value is required")
+    candidate = Path(value)
+    if not candidate.is_absolute():
+        candidate = (base_dir / candidate).resolve()
+    return candidate
+
+
+def cmd_train_run(args: argparse.Namespace) -> int:
+    config_path = Path(args.config).resolve()
+    config_dir = config_path.parent
+    cfg = json.loads(config_path.read_text(encoding="utf-8"))
+    if not isinstance(cfg, dict):
+        raise ValueError("config must be a JSON object")
+
+    # Step 1: registry index table
+    registry_cfg = cfg.get("registry", {})
+    if not isinstance(registry_cfg, dict):
+        raise ValueError("config.registry must be an object")
+    registry_path = _resolve_config_path(registry_cfg.get("path"), base_dir=config_dir)
+    index_output = _resolve_config_path(
+        registry_cfg.get("index_output"),
+        base_dir=config_dir,
+        default_name="source_index_table.json",
+    )
+    registry = SourceRegistry.from_jsonl(registry_path)
+    idx_to_source = registry.build_index_table(
+        include_special=not bool(registry_cfg.get("no_special", False)),
+        include_parametric=not bool(registry_cfg.get("no_parametric", False)),
+        include_model_output=not bool(registry_cfg.get("no_model_output", False)),
+    )
+    for source_id in list(registry_cfg.get("ensure_source_id", [])):
+        if source_id in idx_to_source.values():
+            continue
+        positive_indices = [idx for idx in idx_to_source.keys() if idx >= 0]
+        next_idx = (max(positive_indices) + 1) if positive_indices else 1
+        idx_to_source[next_idx] = str(source_id)
+    save_index_table(index_output, idx_to_source)
+    source_to_idx = invert_index_table(idx_to_source)
+    registry_manifest_hash = registry.manifest_hash()
+
+    # Step 2: stamp + tokenize
+    stamp_cfg = cfg.get("stamp", {})
+    if not isinstance(stamp_cfg, dict):
+        raise ValueError("config.stamp must be an object")
+    stamp_input = _resolve_config_path(stamp_cfg.get("input"), base_dir=config_dir)
+    stamp_output = _resolve_config_path(stamp_cfg.get("output"), base_dir=config_dir, default_name="stamped.jsonl")
+    rows = read_jsonl(stamp_input)
+    stamped = stamp_corpus_rows(
+        rows,
+        text_field=str(stamp_cfg.get("text_field", "text")),
+        source_id_field=str(stamp_cfg.get("source_id_field", "source_id")),
+        default_source_id=stamp_cfg.get("default_source_id"),
+    )
+    tokenizer_cfg = stamp_cfg.get("tokenizer", {})
+    if not isinstance(tokenizer_cfg, dict):
+        raise ValueError("config.stamp.tokenizer must be an object")
+    tokenizer = build_tokenizer(
+        backend=str(tokenizer_cfg.get("backend", "simple")),
+        name_or_path=tokenizer_cfg.get("name"),
+        trust_remote_code=bool(tokenizer_cfg.get("trust_remote_code", False)),
+        use_fast=bool(tokenizer_cfg.get("use_fast", True)),
+        add_special_tokens=bool(tokenizer_cfg.get("add_special_tokens", False)),
+    )
+    tokenized = tokenize_stamped_rows(
+        stamped,
+        source_to_idx=source_to_idx,
+        tokenizer=tokenizer,
+        drop_empty=not bool(stamp_cfg.get("keep_empty", False)),
+    )
+    write_jsonl(stamp_output, tokenized)
+
+    # Step 3: pack
+    pack_cfg = cfg.get("pack", {})
+    if not isinstance(pack_cfg, dict):
+        raise ValueError("config.pack must be an object")
+    packed = pack_tokenized_rows(
+        tokenized,
+        sequence_length=int(pack_cfg.get("sequence_length", 2048)),
+        drop_remainder=bool(pack_cfg.get("drop_remainder", False)),
+        include_labels=bool(pack_cfg.get("include_labels", False)),
+    )
+    shard_paths: list[str] = []
+    output_dir_value = pack_cfg.get("output_dir")
+    if output_dir_value:
+        output_dir = _resolve_config_path(str(output_dir_value), base_dir=config_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        row_per_shard = int(pack_cfg.get("rows_per_shard", 1000))
+        shard_prefix = str(pack_cfg.get("shard_prefix", "packed"))
+        for shard_idx, shard in enumerate(shard_rows(packed, rows_per_shard=row_per_shard)):
+            shard_path = output_dir / f"{shard_prefix}-{shard_idx:05d}.jsonl"
+            write_jsonl(shard_path, shard)
+            shard_paths.append(str(shard_path))
+    else:
+        packed_output = _resolve_config_path(pack_cfg.get("output"), base_dir=config_dir, default_name="packed.jsonl")
+        write_jsonl(packed_output, packed)
+        shard_paths.append(str(packed_output))
+
+    # Step 4: validate
+    validate_cfg = cfg.get("validate", {})
+    if not isinstance(validate_cfg, dict):
+        raise ValueError("config.validate must be an object")
+    validation_report = validate_training_rows(packed)
+    validate_output = validate_cfg.get("report_output")
+    if validate_output:
+        validate_report_path = _resolve_config_path(str(validate_output), base_dir=config_dir)
+        validate_report_path.write_text(
+            json.dumps(validation_report, indent=2, sort_keys=True),
+            encoding="utf-8",
+        )
+
+    # Step 5: manifest
+    manifest_cfg = cfg.get("manifest", {})
+    if not isinstance(manifest_cfg, dict):
+        raise ValueError("config.manifest must be an object")
+    run_id = str(manifest_cfg.get("run_id", "")).strip()
+    if not run_id:
+        raise ValueError("config.manifest.run_id is required")
+    registry_hash_cfg = manifest_cfg.get("registry_manifest_hash", "auto")
+    if registry_hash_cfg == "auto":
+        manifest_registry_hash = registry_manifest_hash
+    else:
+        manifest_registry_hash = str(registry_hash_cfg)
+    manifest_shards_cfg = list(manifest_cfg.get("shards", []))
+    if manifest_shards_cfg:
+        manifest_shards = [
+            str(_resolve_config_path(str(path), base_dir=config_dir)) for path in manifest_shards_cfg
+        ]
+    else:
+        manifest_shards = shard_paths
+    manifest_output = _resolve_config_path(
+        manifest_cfg.get("output"),
+        base_dir=config_dir,
+        default_name="training_manifest.json",
+    )
+    manifest = build_training_manifest_with_hashes(
+        run_id=run_id,
+        registry_manifest_hash=manifest_registry_hash,
+        shard_paths=manifest_shards,
+    )
+    manifest_output.write_text(json.dumps(manifest, indent=2, sort_keys=True), encoding="utf-8")
+
+    # Step 6: source report (optional)
+    report_cfg = cfg.get("report", {})
+    if not isinstance(report_cfg, dict):
+        raise ValueError("config.report must be an object")
+    report_enabled = bool(report_cfg.get("enabled", True))
+    source_report_payload: dict | None = None
+    if report_enabled:
+        source_report = build_source_report(validation_report, idx_to_source)
+        source_report_payload = {"ok": True, "summary": validation_report, "source_report": source_report}
+        source_report_output = report_cfg.get("output")
+        if source_report_output:
+            source_report_path = _resolve_config_path(str(source_report_output), base_dir=config_dir)
+            source_report_path.write_text(json.dumps(source_report_payload, indent=2, sort_keys=True), encoding="utf-8")
+
+    summary = {
+        "ok": True,
+        "config": str(config_path),
+        "tokenizer": tokenizer.name,
+        "registry_manifest_hash": registry_manifest_hash,
+        "index_table": str(index_output),
+        "stamped_rows": len(tokenized),
+        "packed_rows": len(packed),
+        "shards": shard_paths,
+        "manifest": str(manifest_output),
+        "manifest_hash": manifest["manifest_hash"],
+        "validation": validation_report,
+        "source_report_written": bool(source_report_payload),
+    }
+    print(json.dumps(summary, sort_keys=True))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="al10", description="AL-1.0 starter toolkit")
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
@@ -467,6 +692,14 @@ def build_parser() -> argparse.ArgumentParser:
     train_report.add_argument("--index-table")
     train_report.add_argument("--output")
     train_report.set_defaults(func=cmd_train_report)
+
+    train_init_config = train_subparsers.add_parser("init-config", help="Write training run config template")
+    train_init_config.add_argument("--output", required=True)
+    train_init_config.set_defaults(func=cmd_train_init_config)
+
+    train_run = train_subparsers.add_parser("run", help="Execute full training ingest pipeline from config JSON")
+    train_run.add_argument("--config", required=True)
+    train_run.set_defaults(func=cmd_train_run)
 
     return parser
 

@@ -15,6 +15,21 @@ auditable.
 
 ## Command flow
 
+### 0) (Optional) Generate config template
+
+```bash
+python3 -m al10.cli train init-config --output train_run.json
+```
+
+### 0b) (Optional) Run full pipeline from config
+
+```bash
+python3 -m al10.cli train run --config train_run.json
+```
+
+This command executes the full sequence:
+`registry-index -> stamp -> pack -> validate -> manifest-build -> report`.
+
 ### 1) Build source index table
 
 ```bash

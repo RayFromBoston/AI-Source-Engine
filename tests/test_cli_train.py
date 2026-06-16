@@ -162,6 +162,61 @@ class TestCliTrain(unittest.TestCase):
             shards = sorted(shard_dir.glob("train-*.jsonl"))
             self.assertGreaterEqual(len(shards), 2)
 
+    def test_train_init_config_and_run(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp = pathlib.Path(temp_dir)
+            registry_path = temp / "registry.jsonl"
+            corpus_path = temp / "corpus.jsonl"
+            config_path = temp / "train_run.json"
+            manifest_path = temp / "training_manifest.json"
+            source_report_path = temp / "source_report.json"
+            shard_dir = temp / "shards"
+
+            code = cli.main(
+                [
+                    "init-registry",
+                    "--output",
+                    str(registry_path),
+                    "--source-id",
+                    "sha256:source-a",
+                    "--content-hash",
+                    "sha256:content-a",
+                    "--uri",
+                    "https://example.com/a",
+                    "--rightsholder-id",
+                    "entity:a",
+                ]
+            )
+            self.assertEqual(code, 0)
+
+            corpus_rows = [
+                {"text": "hello world", "source_id": "sha256:source-a"},
+                {"text": "row without source id"},
+            ]
+            corpus_path.write_text("\n".join(json.dumps(row) for row in corpus_rows) + "\n", encoding="utf-8")
+
+            code = cli.main(["train", "init-config", "--output", str(config_path)])
+            self.assertEqual(code, 0)
+            cfg = json.loads(config_path.read_text(encoding="utf-8"))
+            cfg["registry"]["path"] = str(registry_path)
+            cfg["registry"]["index_output"] = str(temp / "index.json")
+            cfg["stamp"]["input"] = str(corpus_path)
+            cfg["stamp"]["output"] = str(temp / "stamped.jsonl")
+            cfg["pack"]["sequence_length"] = 2
+            cfg["pack"]["output"] = None
+            cfg["pack"]["output_dir"] = str(shard_dir)
+            cfg["pack"]["rows_per_shard"] = 1
+            cfg["manifest"]["run_id"] = "run-config"
+            cfg["manifest"]["output"] = str(manifest_path)
+            cfg["report"]["output"] = str(source_report_path)
+            config_path.write_text(json.dumps(cfg, indent=2, sort_keys=True), encoding="utf-8")
+
+            code = cli.main(["train", "run", "--config", str(config_path)])
+            self.assertEqual(code, 0)
+            self.assertTrue(manifest_path.exists())
+            self.assertTrue(source_report_path.exists())
+            self.assertGreaterEqual(len(sorted(shard_dir.glob("packed-*.jsonl"))), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

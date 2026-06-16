@@ -100,3 +100,10 @@ See:
 - `docs/training-ingest-mvp.md`
 
 for the `al10 train` end-to-end stamping/packing/validation command sequence.
+
+## 11) Run config-driven training pipeline
+
+```bash
+python3 -m al10.cli train init-config --output train_run.json
+python3 -m al10.cli train run --config train_run.json
+```
