@@ -1,4 +1,8 @@
+import pathlib
+import sys
 import unittest
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 
 from al10.math import merge_query_heads, source_bucket, validate_probability_sum
 from al10.receipt import (
@@ -15,7 +19,9 @@ class TestAL10Math(unittest.TestCase):
             [0.6, 0.4],
             [0.2, 0.8],
         ]
-        self.assertEqual(merge_query_heads(alpha_heads), [0.4, 0.6])
+        merged = merge_query_heads(alpha_heads)
+        self.assertAlmostEqual(merged[0], 0.4)
+        self.assertAlmostEqual(merged[1], 0.6)
 
     def test_source_bucket(self) -> None:
         alpha_ij = [0.4, 0.1, 0.2, 0.3]
