@@ -85,6 +85,7 @@ python3 -m unittest discover -s tests -v
 - `docs/http-api.md`
 - `docs/e2e-app.md`
 - `docs/quality-and-ci.md`
+- `docs/release-and-packaging.md`
 
 ## Repository layout
 

@@ -20,6 +20,7 @@ al10 = "al10.cli:main"
 
 [tool.setuptools]
 package-dir = { "" = "src" }
+license-files = []
 
 [tool.setuptools.packages.find]
 where = ["src"]
