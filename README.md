@@ -39,7 +39,7 @@ If you are hosting this on a website, include a simple **Name / Title / Email** 
 
 If you are a developer, researcher, or creator who supports mandatory attribution logging:
 
-1. Open `SIGNATORIES.md`.
+1. Open the signatories file in the repository root.
 2. Add your name, title, and organization.
 3. Submit a Pull Request.
 

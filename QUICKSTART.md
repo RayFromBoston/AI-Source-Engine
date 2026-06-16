@@ -1,6 +1,6 @@
 # Quickstart
 
-This file shows exactly how to run AI Source Engine fast, then points you to the full implementation guide.
+This file shows exactly how to run AI Source Engine fast.
 
 ## What this does
 
@@ -8,10 +8,6 @@ AI Source Engine has two technical jobs:
 
 1. read attention numbers and produce source-ratio receipts at inference time
 2. preserve per-token source identity (`source_idx`) through training data prep
-
-If you want full detail, read:
-
-- `ENGINEERING_GUIDE.md`
 
 ## 1) Install
 
@@ -58,5 +54,5 @@ python3 -m al10.cli train validate --input packed.jsonl
 
 ## 6) Sign the open letter
 
-- Read `README.md`
-- Add your entry in `SIGNATORIES.md` by Pull Request
+- Read the open letter on the repository landing page.
+- Add your signatory entry by Pull Request.

@@ -2,8 +2,6 @@
 
 This file records supporters of the Open Letter:
 
-- `README.md`
-
 ## Sign by Pull Request
 
 Developers, researchers, and creators can sign through GitHub:
