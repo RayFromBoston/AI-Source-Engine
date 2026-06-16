@@ -283,3 +283,24 @@ Core context references on `main`:
 AI Source Engine is a two-part provenance system where training data keeps
 per-token source identity and generated outputs produce source-ratio receipts,
 so attribution can be audited instead of assumed.
+
+## Appendix: Tiny concrete example (Part 1)
+
+Assume one decode step with 4 context positions:
+
+- `context_source_idx = [10, 10, 21, 21]`
+- merged attention over positions = `[0.2, 0.3, 0.1, 0.4]`
+
+Bucket by source:
+
+- source 10 gets `0.2 + 0.3 = 0.5`
+- source 21 gets `0.1 + 0.4 = 0.5`
+
+If later decode steps lean more toward source 10, a final normalized receipt
+could become:
+
+- source 10: 0.68
+- source 21: 0.32
+
+That is exactly what "read attention numbers, then output source ratios" means
+in practice.
