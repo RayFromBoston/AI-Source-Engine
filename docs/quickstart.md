@@ -108,3 +108,9 @@ For policy and scale controls, see `docs/production-hardening.md`.
 python3 -m al10.cli train init-config --output train_run.json
 python3 -m al10.cli train run --config train_run.json
 ```
+
+## 12) Follow first adopter rollout checklist
+
+See:
+
+- `docs/first-adopter-checklist.md`

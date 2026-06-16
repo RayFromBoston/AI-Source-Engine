@@ -90,6 +90,7 @@ python3 -m unittest discover -s tests -v
 - `docs/training-ingest-mvp.md`
 - `docs/trainer-integrations.md`
 - `docs/production-hardening.md`
+- `docs/first-adopter-checklist.md`
 
 ## Repository layout
 
