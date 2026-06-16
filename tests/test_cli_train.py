@@ -129,6 +129,39 @@ class TestCliTrain(unittest.TestCase):
             self.assertEqual(code, 0)
             self.assertTrue(source_report_path.exists())
 
+    def test_train_pack_output_dir(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp = pathlib.Path(temp_dir)
+            tokenized_path = temp / "tokenized.jsonl"
+            shard_dir = temp / "shards"
+
+            rows = [
+                {"input_ids": [1, 2], "source_idx": [1, 1], "token_count": 2},
+                {"input_ids": [3, 4], "source_idx": [1, 1], "token_count": 2},
+                {"input_ids": [5, 6], "source_idx": [2, 2], "token_count": 2},
+            ]
+            tokenized_path.write_text("\n".join(json.dumps(row) for row in rows) + "\n", encoding="utf-8")
+
+            code = cli.main(
+                [
+                    "train",
+                    "pack",
+                    "--input",
+                    str(tokenized_path),
+                    "--output-dir",
+                    str(shard_dir),
+                    "--sequence-length",
+                    "2",
+                    "--rows-per-shard",
+                    "1",
+                    "--shard-prefix",
+                    "train",
+                ]
+            )
+            self.assertEqual(code, 0)
+            shards = sorted(shard_dir.glob("train-*.jsonl"))
+            self.assertGreaterEqual(len(shards), 2)
+
 
 if __name__ == "__main__":
     unittest.main()

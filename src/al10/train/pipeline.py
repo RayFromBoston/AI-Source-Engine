@@ -8,7 +8,7 @@ from typing import Any, Iterable, Mapping
 
 from ..registry import build_training_manifest
 from .io import file_sha256
-from .tokenizer import SimpleWhitespaceTokenizer
+from .tokenizer import SimpleWhitespaceTokenizer, TokenizerProtocol
 
 
 def save_index_table(path: str | Path, idx_to_source_id: Mapping[int, str]) -> None:
@@ -61,7 +61,7 @@ def tokenize_stamped_rows(
     stamped_rows: Iterable[Mapping[str, Any]],
     *,
     source_to_idx: Mapping[str, int],
-    tokenizer: SimpleWhitespaceTokenizer | None = None,
+    tokenizer: TokenizerProtocol | None = None,
     drop_empty: bool = True,
 ) -> list[dict[str, Any]]:
     tok = tokenizer or SimpleWhitespaceTokenizer()
@@ -211,3 +211,10 @@ def build_training_manifest_with_hashes(
     )
     manifest["shard_hashes"] = {path: file_sha256(path) for path in sorted(shard_paths)}
     return manifest
+
+
+def shard_rows(rows: list[Mapping[str, Any]], rows_per_shard: int) -> list[list[Mapping[str, Any]]]:
+    """Split rows into deterministic shard chunks."""
+    if rows_per_shard <= 0:
+        raise ValueError("rows_per_shard must be > 0")
+    return [rows[i : i + rows_per_shard] for i in range(0, len(rows), rows_per_shard)]

@@ -6,9 +6,11 @@ import unittest
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 
 from al10.train import (
+    build_tokenizer,
     build_training_manifest_with_hashes,
     invert_index_table,
     pack_tokenized_rows,
+    shard_rows,
     stamp_corpus_rows,
     tokenize_stamped_rows,
     validate_training_rows,
@@ -58,6 +60,22 @@ class TestTrainPipeline(unittest.TestCase):
             self.assertIn("manifest_hash", manifest)
             self.assertIn("shard_hashes", manifest)
             self.assertIn(str(shard_path), manifest["shard_hashes"])
+
+    def test_shard_rows(self) -> None:
+        rows = [{"i": i} for i in range(5)]
+        shards = shard_rows(rows, rows_per_shard=2)
+        self.assertEqual(len(shards), 3)
+        self.assertEqual(len(shards[0]), 2)
+        self.assertEqual(len(shards[-1]), 1)
+
+    def test_build_tokenizer_simple(self) -> None:
+        tokenizer = build_tokenizer(backend="simple")
+        tokens = tokenizer.encode("hello world")
+        self.assertGreaterEqual(len(tokens), 2)
+
+    def test_build_tokenizer_hf_requires_name(self) -> None:
+        with self.assertRaises(ValueError):
+            _ = build_tokenizer(backend="hf")
 
 
 if __name__ == "__main__":

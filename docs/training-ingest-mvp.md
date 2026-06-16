@@ -36,6 +36,17 @@ python3 -m al10.cli train stamp \
   --default-source-id UNLICENSED_UNKNOWN
 ```
 
+Use model-native tokenization via Hugging Face backend:
+
+```bash
+python3 -m al10.cli train stamp \
+  --input corpus.jsonl \
+  --output stamped.jsonl \
+  --index-table source_index_table.json \
+  --tokenizer-backend hf \
+  --tokenizer-name gpt2
+```
+
 ### 3) Pack fixed-length sequences
 
 ```bash
@@ -44,6 +55,17 @@ python3 -m al10.cli train pack \
   --output packed.jsonl \
   --sequence-length 2048 \
   --include-labels
+```
+
+For larger corpora, write multiple shard files:
+
+```bash
+python3 -m al10.cli train pack \
+  --input stamped.jsonl \
+  --output-dir train_shards \
+  --sequence-length 2048 \
+  --rows-per-shard 5000 \
+  --shard-prefix train
 ```
 
 ### 4) Validate invariants
@@ -76,5 +98,5 @@ python3 -m al10.cli train report \
 ## Notes
 
 - The MVP tokenizer is deterministic and dependency-free (`simple-whitespace-v1`).
-- Teams can swap tokenization logic in future iterations with model-native tokenizers.
+- Optional HF tokenizer backend is supported via `--tokenizer-backend hf --tokenizer-name ...`.
 - Hard invariant: each row must satisfy `len(input_ids) == len(source_idx)`.

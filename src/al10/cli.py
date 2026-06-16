@@ -15,12 +15,13 @@ from .registry import SourceRegistry, build_training_manifest
 from .scaffold import write_scaffold
 from .server import build_receipt_from_payload, create_demo_receipt, serve
 from .train import (
-    SimpleWhitespaceTokenizer,
+    build_tokenizer,
     build_source_report,
     build_training_manifest_with_hashes,
     invert_index_table,
     load_index_table,
     pack_tokenized_rows,
+    shard_rows,
     read_jsonl,
     save_index_table,
     stamp_corpus_rows,
@@ -242,10 +243,18 @@ def cmd_train_stamp(args: argparse.Namespace) -> int:
         source_id_field=args.source_id_field,
         default_source_id=args.default_source_id,
     )
+    tokenizer = build_tokenizer(
+        backend=args.tokenizer_backend,
+        name_or_path=args.tokenizer_name,
+        trust_remote_code=args.tokenizer_trust_remote_code,
+        use_fast=not args.tokenizer_no_fast,
+        add_special_tokens=args.tokenizer_add_special_tokens,
+    )
+
     tokenized = tokenize_stamped_rows(
         stamped,
         source_to_idx=source_to_idx,
-        tokenizer=SimpleWhitespaceTokenizer(),
+        tokenizer=tokenizer,
         drop_empty=not args.keep_empty,
     )
     write_jsonl(args.output, tokenized)
@@ -258,7 +267,7 @@ def cmd_train_stamp(args: argparse.Namespace) -> int:
                 "rows": len(tokenized),
                 "tokens": total_tokens,
                 "output": args.output,
-                "tokenizer": SimpleWhitespaceTokenizer.name,
+                "tokenizer": tokenizer.name,
             }
         )
     )
@@ -273,8 +282,34 @@ def cmd_train_pack(args: argparse.Namespace) -> int:
         drop_remainder=args.drop_remainder,
         include_labels=args.include_labels,
     )
-    write_jsonl(args.output, packed)
     total_tokens = sum(int(row["token_count"]) for row in packed)
+
+    if args.output_dir:
+        output_dir = Path(args.output_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        shard_groups = shard_rows(packed, rows_per_shard=args.rows_per_shard)
+        shard_paths: list[str] = []
+        for shard_idx, shard in enumerate(shard_groups):
+            shard_path = output_dir / f"{args.shard_prefix}-{shard_idx:05d}.jsonl"
+            write_jsonl(shard_path, shard)
+            shard_paths.append(str(shard_path))
+        print(
+            json.dumps(
+                {
+                    "ok": True,
+                    "rows": len(packed),
+                    "tokens": total_tokens,
+                    "output_dir": str(output_dir),
+                    "shards": shard_paths,
+                }
+            )
+        )
+        return 0
+
+    if not args.output:
+        raise ValueError("either --output or --output-dir must be provided")
+
+    write_jsonl(args.output, packed)
     print(json.dumps({"ok": True, "rows": len(packed), "tokens": total_tokens, "output": args.output}))
     return 0
 
@@ -395,15 +430,24 @@ def build_parser() -> argparse.ArgumentParser:
     train_stamp.add_argument("--text-field", default="text")
     train_stamp.add_argument("--source-id-field", default="source_id")
     train_stamp.add_argument("--default-source-id")
+    train_stamp.add_argument("--tokenizer-backend", choices=["simple", "hf"], default="simple")
+    train_stamp.add_argument("--tokenizer-name", help="Tokenizer model name/path for hf backend")
+    train_stamp.add_argument("--tokenizer-trust-remote-code", action="store_true")
+    train_stamp.add_argument("--tokenizer-no-fast", action="store_true")
+    train_stamp.add_argument("--tokenizer-add-special-tokens", action="store_true")
     train_stamp.add_argument("--keep-empty", action="store_true")
     train_stamp.set_defaults(func=cmd_train_stamp)
 
     train_pack = train_subparsers.add_parser("pack", help="Pack tokenized rows to fixed sequence length")
     train_pack.add_argument("--input", required=True)
-    train_pack.add_argument("--output", required=True)
+    output_group = train_pack.add_mutually_exclusive_group(required=True)
+    output_group.add_argument("--output")
+    output_group.add_argument("--output-dir")
     train_pack.add_argument("--sequence-length", type=int, required=True)
     train_pack.add_argument("--drop-remainder", action="store_true")
     train_pack.add_argument("--include-labels", action="store_true")
+    train_pack.add_argument("--rows-per-shard", type=int, default=1000)
+    train_pack.add_argument("--shard-prefix", default="packed")
     train_pack.set_defaults(func=cmd_train_pack)
 
     train_validate = train_subparsers.add_parser("validate", help="Validate training row invariants")
