@@ -1,5 +1,9 @@
 # An Open Letter to AI Regulators and Foundation Model Creators: End the Black Box
 
+> **Technical users:** go to `START_HERE.md` first.
+>
+> If you are looking for setup, commands, SDK usage, and integration docs, start there.
+
 Generative AI is currently driving toward a dual-threat crisis that threatens both the creator economy and the psychological autonomy of vulnerable users. The industry treats these as separate issues - one as a legal dispute over copyright, the other as an alignment or "safety" problem.
 
 They are not separate. They are symptoms of the exact same architectural flaw, and they must be solved together.
@@ -33,7 +37,7 @@ Civilization is the agreement that what you build matters beyond your lifetime. 
 
 If you are here for the implementation and SDK docs, start with:
 
-- `docs/start-here.md`
+- `START_HERE.md`
 - `docs/quickstart.md`
 
 ## Sign the Petition
