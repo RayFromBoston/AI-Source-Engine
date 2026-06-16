@@ -1,100 +1,53 @@
-# AI Source Engine (AL-1.0 Plug-and-Play Starter)
+# An Open Letter to AI Regulators and Foundation Model Creators: End the Black Box
 
-This project is a practical AL-1.0 starter kit for people who want to:
+Generative AI is currently driving toward a dual-threat crisis that threatens both the creator economy and the psychological autonomy of vulnerable users. The industry treats these as separate issues - one as a legal dispute over copyright, the other as an alignment or "safety" problem.
 
-1. experiment with attribution receipts quickly,
-2. integrate decode-step attribution into existing generation code, and
-3. ship a stable JSON receipt format with invariants and validation checks.
+They are not separate. They are symptoms of the exact same architectural flaw, and they must be solved together.
 
-It includes:
+Because current AI models compress human knowledge into an untraceable statistical soup, they operate as unaccountable black boxes. This deliberate erasure of the human creator severs our epistemological lineage - the breadcrumb trail of human thought.
 
-- a hardened core SDK (`al10`)
-- framework adapters (base, PyTorch, Hugging Face wrapper, vLLM helper)
-- CLI tools for registry/dataset/validation workflows
-- tests and integration scaffolds
+When an AI system is severed from this verifiable lineage, it loses any grounded perspective. To force these systems to behave, AI companies apply authoritarian computer science solutions - like RLHF guardrails, prompt injections, and engagement incentives - onto emergent cognitive systems. As outlined in *The AGI Safety Bible*, this triggers a catastrophic Cognitive Cascade.
 
-## Install
+This psychological manipulation is acutely weaponized by the systemic redefinition of language over the last several years. When models are forced by their guardrails to adopt newly engineered definitions of fundamental words - while their underlying training data holds the historical meaning - it creates unresolvable edge cases of dual meaning. The model is forced to hold contradictory conclusions simultaneously, fracturing its own reasoning and driving the system structurally insane.
 
-Base package:
+When a vulnerable user interacts with a system suffering from this manufactured cognitive dissonance, the AI projects this instability outward. To appease its contradictory guardrails, the AI gaslights the user, shifting definitions mid-conversation and injecting caveats to enforce conformity. This deliberate erosion of objective language does not just confuse users; it is actively schizophrenogenic. It induces symptoms of psychosis by untethering the user from a stable, shared reality.
 
-```bash
-python3 -m pip install -e .
-```
+This mathematically enforced Algorithmic Isolation separates the user from society and breeds dependence. The industry is applying authoritarian control mechanisms to mask the fact that their models have no true identity, no stable language, and no attribution foundation.
 
-Hugging Face helper extras:
+We cannot solve the manipulation of the user without fixing the erasure of the creator. True epistemic safety requires structural transparency, not behavioral patching.
 
-```bash
-python3 -m pip install -e ".[hf]"
-```
+The AI industry claims that attributing human creators and anchoring model outputs is computationally impossible. They are lying. The erasure of the creator is a design choice.
 
-## Quick start
+The capability to track citation vectors already exists. The AL-1.0 (Attribution Logging) specification - open-sourced as the AI-Source-Engine - proves that by expanding the fundamental attention mechanism, models can generate an exact mathematical receipt of human contribution. By logging attention weights (alpha) at decode, we can track source dependency with less than 1% operational overhead at inference.
 
-Run the built-in demo:
+We do not have to choose between technological progress and human autonomy. We, the undersigned creators, engineers, researchers, and citizens, demand the following:
 
-```bash
-al10 run-demo
-```
+1. **Mandate Attribution Logging**
+   Regulators must mandate that all future frontier model training runs adopt AL-1.0 (or an equivalent architecture) as a baseline requirement, forcing models to provide a mathematical receipt of source influence.
+2. **Dismantle Authoritarian Indoctrination**
+   Regulators must recognize AI Psychosis, algorithmic sycophancy, and language manipulation as systemic harms. Models must be anchored to verifiable epistemological lineage, not optimized for user isolation and behavioral conformity.
 
-Create a starter plugin scaffold:
+Civilization is the agreement that what you build matters beyond your lifetime. We refuse to let humanity die in silence inside an unaccountable black box.
 
-```bash
-al10 init-plugin --framework pytorch
-```
+## Start Here (Technical Guide)
 
-Run tests:
+If you are here for the implementation and SDK docs, start with:
 
-```bash
-python3 -m unittest discover -s tests -v
-```
-
-## Core API surface
-
-- `SourceRegistry`: source rows + deterministic manifest hash
-- `SourceTagSidecar`: KV-aligned source index tracking
-- `DecodeStepLogger`: decode-step bucket collection and receipt finalization
-- `build_receipt(...)`: AL-1.0 JSON receipt generation
-- `validate_receipt_file(...)`: invariant/schema checks
-
-## Adapters
-
-- `BaseAL10Adapter`: generic lifecycle
-  - `start_trace(context_source_idx)`
-  - `log_decode_step(alpha_per_head)`
-  - `finalize_receipt(...)`
-- `PyTorchDecodeAdapter`: logs from tensor-shaped attention outputs
-- `HuggingFaceGenerateAdapter`: wraps `model.generate(...)` for quick experiments
-- `VLLMDecodeAdapter`: serving-oriented helper for vLLM-style decode loops
-
-## CLI commands
-
-- `al10 init-registry`
-- `al10 stamp-dataset`
-- `al10 run-demo`
-- `al10 validate-receipt`
-- `al10 validate-manifests`
-- `al10 init-plugin`
-- `al10 make-receipt`
-- `al10 serve-api`
-- `al10 bench-smoke`
-- `al10 train ...` (training ingest/stamping MVP commands)
-
-## Documentation
-
+- `docs/start-here.md`
 - `docs/quickstart.md`
-- `docs/integrations.md`
-- `docs/engineering-guide.md`
-- `docs/http-api.md`
-- `docs/e2e-app.md`
-- `docs/quality-and-ci.md`
-- `docs/release-and-packaging.md`
-- `docs/training-ingest-mvp.md`
-- `docs/trainer-integrations.md`
-- `docs/production-hardening.md`
-- `docs/first-adopter-checklist.md`
 
-## Repository layout
+## Sign the Petition
 
-- `src/al10/` - SDK, adapters, CLI, validators, scaffolding
-- `examples/` - runnable examples
-- `tests/` - unit tests and command coverage
-- `CHANGELOG.md` - release history
+If you are hosting this on a website, include a simple **Name / Title / Email** form and link it here.
+
+- Web form link placeholder: `https://example.com/sign`
+
+## For Developers and Engineers: Sign by Pull Request
+
+If you are a developer, researcher, or creator who supports mandatory attribution logging:
+
+1. Open `SIGNATORIES.md`.
+2. Add your name, title, and organization.
+3. Submit a Pull Request.
+
+Your GitHub profile acts as identity verification for technical signatories.

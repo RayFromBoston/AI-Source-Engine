@@ -114,3 +114,10 @@ python3 -m al10.cli train run --config train_run.json
 See:
 
 - `docs/first-adopter-checklist.md`
+
+## 13) Read and sign the open letter
+
+See:
+
+- `OPEN_LETTER.md`
+- `SIGNATORIES.md` (sign via Pull Request)
