@@ -2,8 +2,6 @@
 
 This file records supporters of the Open Letter:
 
-- `OPEN_LETTER.md`
-
 ## Sign by Pull Request
 
 Developers, researchers, and creators can sign through GitHub:

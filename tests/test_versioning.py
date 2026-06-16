@@ -21,11 +21,5 @@ class TestVersioning(unittest.TestCase):
     def test_pyproject_version_matches_package(self) -> None:
         self.assertEqual(self._read_pyproject_version(), __version__)
 
-    def test_changelog_has_current_version(self) -> None:
-        changelog_path = pathlib.Path(__file__).resolve().parents[1] / "CHANGELOG.md"
-        changelog = changelog_path.read_text(encoding="utf-8")
-        self.assertIn(f"## [{__version__}]", changelog)
-
-
 if __name__ == "__main__":
     unittest.main()

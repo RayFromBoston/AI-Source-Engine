@@ -1,10 +1,5 @@
 # The Open Letter to Save Civilization: To Lawmakers, Regulators, and Foundation Model Creators
 
-> **Technical users:** go to `START_HERE.md` first.
->
-> If you are looking for setup, commands, SDK usage, and integration docs, start there.
->
-> For the full explanation of the two technical parts (inference ratio engine + training source-vector pipeline): `COMPLETE_REFERENCE.md`.
 
 Generative AI is currently driving toward a dual-threat crisis that threatens both the creator economy and the psychological autonomy of vulnerable users. The industry treats these as separate issues - one as a legal dispute over copyright, the other as an alignment or "safety" problem.
 
@@ -35,13 +30,6 @@ We do not have to choose between technological progress and human autonomy. We, 
 
 Civilization is the agreement that what you build matters beyond your lifetime. We refuse to let humanity die in silence inside an unaccountable black box.
 
-## Start Here (Technical Guide)
-
-If you are here for the implementation and SDK docs, start with:
-
-- `START_HERE.md`
-- `docs/quickstart.md`
-
 ## Sign the Petition
 
 If you are hosting this on a website, include a simple **Name / Title / Email** form and link it here.
@@ -52,7 +40,7 @@ If you are hosting this on a website, include a simple **Name / Title / Email** 
 
 If you are a developer, researcher, or creator who supports mandatory attribution logging:
 
-1. Open `SIGNATORIES.md`.
+1. Open the signatories file in the repository root.
 2. Add your name, title, and organization.
 3. Submit a Pull Request.
 
