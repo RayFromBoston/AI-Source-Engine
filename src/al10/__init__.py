@@ -32,6 +32,9 @@ from .train import (
     build_source_report,
     build_training_manifest_with_hashes,
     invert_index_table,
+    iter_jsonl,
+    iter_packed_tokenized_rows,
+    iter_tokenized_stamped_rows,
     load_index_table,
     pad_batch,
     pack_tokenized_rows,
@@ -40,6 +43,7 @@ from .train import (
     stamp_corpus_rows,
     tokenize_stamped_rows,
     validate_training_rows,
+    write_jsonl_stream,
 )
 from .tracing import DecodeStepLogger, SourceTagSidecar
 from .validate import validate_manifest_hash, validate_receipt_dict, validate_receipt_file
@@ -82,6 +86,9 @@ __all__ = [
     "build_training_manifest_with_hashes",
     "create_demo_receipt",
     "invert_index_table",
+    "iter_jsonl",
+    "iter_packed_tokenized_rows",
+    "iter_tokenized_stamped_rows",
     "load_index_table",
     "merge_query_heads",
     "pack_tokenized_rows",
@@ -95,6 +102,7 @@ __all__ = [
     "tokenize_stamped_rows",
     "__version__",
     "validate_training_rows",
+    "write_jsonl_stream",
     "validate_manifest_hash",
     "validate_probability_sum",
     "validate_receipt_dict",

@@ -62,6 +62,23 @@ python3 -m al10.cli train stamp \
   --tokenizer-name gpt2
 ```
 
+Unknown source policy controls:
+
+```bash
+python3 -m al10.cli train stamp \
+  --input corpus.jsonl \
+  --output stamped.jsonl \
+  --index-table source_index_table.json \
+  --unknown-source-policy fallback \
+  --fallback-source-id UNLICENSED_UNKNOWN
+```
+
+Policies:
+
+- `error` (default): fail when a source_id is unknown
+- `fallback`: remap unknown sources to a configured fallback source id
+- `skip`: skip unknown-source rows
+
 ### 3) Pack fixed-length sequences
 
 ```bash
@@ -82,6 +99,9 @@ python3 -m al10.cli train pack \
   --rows-per-shard 5000 \
   --shard-prefix train
 ```
+
+The pack command now streams packed rows directly to outputs, which reduces
+peak memory usage on larger datasets.
 
 ### 4) Validate invariants
 
@@ -114,5 +134,6 @@ python3 -m al10.cli train report \
 
 - The MVP tokenizer is deterministic and dependency-free (`simple-whitespace-v1`).
 - Optional HF tokenizer backend is supported via `--tokenizer-backend hf --tokenizer-name ...`.
+- Unknown-source policy controls are available via `--unknown-source-policy`.
 - Hard invariant: each row must satisfy `len(input_ids) == len(source_idx)`.
 - Trainer loop consumption helpers are documented in `docs/trainer-integrations.md`.

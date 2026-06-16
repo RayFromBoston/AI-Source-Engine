@@ -19,8 +19,9 @@ from .train import (
     build_source_report,
     build_training_manifest_with_hashes,
     invert_index_table,
+    iter_jsonl,
+    iter_packed_tokenized_rows,
     load_index_table,
-    pack_tokenized_rows,
     shard_rows,
     read_jsonl,
     save_index_table,
@@ -28,6 +29,7 @@ from .train import (
     tokenize_stamped_rows,
     validate_training_rows,
     write_jsonl,
+    write_jsonl_stream,
 )
 from .validate import validate_manifest_hash, validate_receipt_file, validate_registry_file
 from .version import __version__
@@ -233,7 +235,7 @@ def cmd_train_registry_index(args: argparse.Namespace) -> int:
 
 
 def cmd_train_stamp(args: argparse.Namespace) -> int:
-    rows = read_jsonl(args.input)
+    rows = list(iter_jsonl(args.input))
     idx_to_source = load_index_table(args.index_table)
     source_to_idx = invert_index_table(idx_to_source)
 
@@ -256,10 +258,13 @@ def cmd_train_stamp(args: argparse.Namespace) -> int:
         source_to_idx=source_to_idx,
         tokenizer=tokenizer,
         drop_empty=not args.keep_empty,
+        unknown_source_policy=args.unknown_source_policy,
+        fallback_source_id=args.fallback_source_id,
     )
     write_jsonl(args.output, tokenized)
 
     total_tokens = sum(int(row["token_count"]) for row in tokenized)
+    dropped_rows = max(0, len(stamped) - len(tokenized))
     print(
         json.dumps(
             {
@@ -268,6 +273,8 @@ def cmd_train_stamp(args: argparse.Namespace) -> int:
                 "tokens": total_tokens,
                 "output": args.output,
                 "tokenizer": tokenizer.name,
+                "unknown_source_policy": args.unknown_source_policy,
+                "dropped_rows": dropped_rows,
             }
         )
     )
@@ -275,29 +282,47 @@ def cmd_train_stamp(args: argparse.Namespace) -> int:
 
 
 def cmd_train_pack(args: argparse.Namespace) -> int:
-    rows = read_jsonl(args.input)
-    packed = pack_tokenized_rows(
-        rows,
+    packed_iter = iter_packed_tokenized_rows(
+        iter_jsonl(args.input),
         sequence_length=args.sequence_length,
         drop_remainder=args.drop_remainder,
         include_labels=args.include_labels,
     )
-    total_tokens = sum(int(row["token_count"]) for row in packed)
 
     if args.output_dir:
         output_dir = Path(args.output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
-        shard_groups = shard_rows(packed, rows_per_shard=args.rows_per_shard)
         shard_paths: list[str] = []
-        for shard_idx, shard in enumerate(shard_groups):
-            shard_path = output_dir / f"{args.shard_prefix}-{shard_idx:05d}.jsonl"
-            write_jsonl(shard_path, shard)
-            shard_paths.append(str(shard_path))
+        total_rows = 0
+        total_tokens = 0
+        shard_idx = -1
+        current_rows = 0
+        handle = None
+        try:
+            for row in packed_iter:
+                if handle is None or current_rows >= args.rows_per_shard:
+                    if handle is not None:
+                        handle.close()
+                    shard_idx += 1
+                    shard_path = output_dir / f"{args.shard_prefix}-{shard_idx:05d}.jsonl"
+                    shard_paths.append(str(shard_path))
+                    handle = shard_path.open("w", encoding="utf-8")
+                    current_rows = 0
+
+                handle.write(json.dumps(row, sort_keys=True, separators=(",", ":")))
+                handle.write("\n")
+                current_rows += 1
+                total_rows += 1
+                total_tokens += int(row.get("token_count", 0))
+        finally:
+            if handle is not None:
+                handle.close()
+
         print(
             json.dumps(
                 {
                     "ok": True,
-                    "rows": len(packed),
+                    "rows": total_rows,
                     "tokens": total_tokens,
                     "output_dir": str(output_dir),
                     "shards": shard_paths,
@@ -309,8 +334,8 @@ def cmd_train_pack(args: argparse.Namespace) -> int:
     if not args.output:
         raise ValueError("either --output or --output-dir must be provided")
 
-    write_jsonl(args.output, packed)
-    print(json.dumps({"ok": True, "rows": len(packed), "tokens": total_tokens, "output": args.output}))
+    rows_written, total_tokens = write_jsonl_stream(args.output, packed_iter)
+    print(json.dumps({"ok": True, "rows": rows_written, "tokens": total_tokens, "output": args.output}))
     return 0
 
 
@@ -362,6 +387,8 @@ def cmd_train_init_config(args: argparse.Namespace) -> int:
             "text_field": "text",
             "source_id_field": "source_id",
             "default_source_id": "UNLICENSED_UNKNOWN",
+            "unknown_source_policy": "fallback",
+            "fallback_source_id": "UNLICENSED_UNKNOWN",
             "keep_empty": False,
             "tokenizer": {
                 "backend": "simple",
@@ -466,6 +493,8 @@ def cmd_train_run(args: argparse.Namespace) -> int:
         source_to_idx=source_to_idx,
         tokenizer=tokenizer,
         drop_empty=not bool(stamp_cfg.get("keep_empty", False)),
+        unknown_source_policy=str(stamp_cfg.get("unknown_source_policy", "error")),
+        fallback_source_id=stamp_cfg.get("fallback_source_id"),
     )
     write_jsonl(stamp_output, tokenized)
 
@@ -473,11 +502,13 @@ def cmd_train_run(args: argparse.Namespace) -> int:
     pack_cfg = cfg.get("pack", {})
     if not isinstance(pack_cfg, dict):
         raise ValueError("config.pack must be an object")
-    packed = pack_tokenized_rows(
-        tokenized,
-        sequence_length=int(pack_cfg.get("sequence_length", 2048)),
-        drop_remainder=bool(pack_cfg.get("drop_remainder", False)),
-        include_labels=bool(pack_cfg.get("include_labels", False)),
+    packed = list(
+        iter_packed_tokenized_rows(
+            tokenized,
+            sequence_length=int(pack_cfg.get("sequence_length", 2048)),
+            drop_remainder=bool(pack_cfg.get("drop_remainder", False)),
+            include_labels=bool(pack_cfg.get("include_labels", False)),
+        )
     )
     shard_paths: list[str] = []
     output_dir_value = pack_cfg.get("output_dir")
@@ -655,6 +686,8 @@ def build_parser() -> argparse.ArgumentParser:
     train_stamp.add_argument("--text-field", default="text")
     train_stamp.add_argument("--source-id-field", default="source_id")
     train_stamp.add_argument("--default-source-id")
+    train_stamp.add_argument("--unknown-source-policy", choices=["error", "fallback", "skip"], default="error")
+    train_stamp.add_argument("--fallback-source-id")
     train_stamp.add_argument("--tokenizer-backend", choices=["simple", "hf"], default="simple")
     train_stamp.add_argument("--tokenizer-name", help="Tokenizer model name/path for hf backend")
     train_stamp.add_argument("--tokenizer-trust-remote-code", action="store_true")

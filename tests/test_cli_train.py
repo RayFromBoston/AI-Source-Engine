@@ -129,6 +129,60 @@ class TestCliTrain(unittest.TestCase):
             self.assertEqual(code, 0)
             self.assertTrue(source_report_path.exists())
 
+    def test_train_stamp_unknown_policy_skip(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp = pathlib.Path(temp_dir)
+            registry_path = temp / "registry.jsonl"
+            index_path = temp / "index.json"
+            corpus_path = temp / "corpus.jsonl"
+            stamped_path = temp / "stamped.jsonl"
+
+            code = cli.main(
+                [
+                    "init-registry",
+                    "--output",
+                    str(registry_path),
+                    "--source-id",
+                    "sha256:source-a",
+                    "--content-hash",
+                    "sha256:content-a",
+                    "--uri",
+                    "https://example.com/a",
+                    "--rightsholder-id",
+                    "entity:a",
+                ]
+            )
+            self.assertEqual(code, 0)
+
+            code = cli.main(
+                ["train", "registry-index", "--registry", str(registry_path), "--output", str(index_path)]
+            )
+            self.assertEqual(code, 0)
+
+            corpus_rows = [
+                {"text": "known row", "source_id": "sha256:source-a"},
+                {"text": "unknown row", "source_id": "sha256:unknown-source"},
+            ]
+            corpus_path.write_text("\n".join(json.dumps(row) for row in corpus_rows) + "\n", encoding="utf-8")
+
+            code = cli.main(
+                [
+                    "train",
+                    "stamp",
+                    "--input",
+                    str(corpus_path),
+                    "--output",
+                    str(stamped_path),
+                    "--index-table",
+                    str(index_path),
+                    "--unknown-source-policy",
+                    "skip",
+                ]
+            )
+            self.assertEqual(code, 0)
+            stamped_rows = [json.loads(line) for line in stamped_path.read_text(encoding="utf-8").splitlines() if line]
+            self.assertEqual(len(stamped_rows), 1)
+
     def test_train_pack_output_dir(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             temp = pathlib.Path(temp_dir)

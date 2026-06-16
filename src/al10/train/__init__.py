@@ -1,6 +1,6 @@
 """AL-1.0 training ingest MVP helpers."""
 
-from .io import file_sha256, read_jsonl, write_jsonl
+from .io import file_sha256, iter_jsonl, read_jsonl, write_jsonl, write_jsonl_stream
 from .integrations import (
     AL10TrainingDataset,
     as_hf_trainer_dataset,
@@ -11,6 +11,8 @@ from .pipeline import (
     build_source_report,
     build_training_manifest_with_hashes,
     invert_index_table,
+    iter_packed_tokenized_rows,
+    iter_tokenized_stamped_rows,
     load_index_table,
     pack_tokenized_rows,
     save_index_table,
@@ -37,6 +39,9 @@ __all__ = [
     "build_tokenizer",
     "build_training_manifest_with_hashes",
     "file_sha256",
+    "iter_jsonl",
+    "iter_packed_tokenized_rows",
+    "iter_tokenized_stamped_rows",
     "invert_index_table",
     "load_index_table",
     "pack_tokenized_rows",
@@ -48,4 +53,5 @@ __all__ = [
     "pad_batch",
     "validate_training_rows",
     "write_jsonl",
+    "write_jsonl_stream",
 ]

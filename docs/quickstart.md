@@ -100,6 +100,7 @@ See:
 - `docs/training-ingest-mvp.md`
 
 for the `al10 train` end-to-end stamping/packing/validation command sequence.
+For policy and scale controls, see `docs/production-hardening.md`.
 
 ## 11) Run config-driven training pipeline
 

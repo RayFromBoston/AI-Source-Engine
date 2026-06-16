@@ -9,6 +9,7 @@ from al10.train import (
     build_tokenizer,
     build_training_manifest_with_hashes,
     invert_index_table,
+    iter_packed_tokenized_rows,
     pack_tokenized_rows,
     shard_rows,
     stamp_corpus_rows,
@@ -76,6 +77,39 @@ class TestTrainPipeline(unittest.TestCase):
     def test_build_tokenizer_hf_requires_name(self) -> None:
         with self.assertRaises(ValueError):
             _ = build_tokenizer(backend="hf")
+
+    def test_unknown_source_policy_fallback_and_skip(self) -> None:
+        source_to_idx = {"KNOWN": 1, "UNLICENSED_UNKNOWN": 2}
+        rows = [
+            {"row_id": 1, "text": "known row", "source_id": "KNOWN"},
+            {"row_id": 2, "text": "unknown row", "source_id": "OTHER"},
+        ]
+
+        fallback_rows = tokenize_stamped_rows(
+            rows,
+            source_to_idx=source_to_idx,
+            unknown_source_policy="fallback",
+            fallback_source_id="UNLICENSED_UNKNOWN",
+        )
+        self.assertEqual(len(fallback_rows), 2)
+        self.assertEqual(set(fallback_rows[1]["source_idx"]), {2})
+
+        skipped_rows = tokenize_stamped_rows(
+            rows,
+            source_to_idx=source_to_idx,
+            unknown_source_policy="skip",
+        )
+        self.assertEqual(len(skipped_rows), 1)
+
+    def test_iter_packed_tokenized_rows(self) -> None:
+        rows = [
+            {"input_ids": [1, 2, 3], "source_idx": [1, 1, 1]},
+            {"input_ids": [4, 5], "source_idx": [2, 2]},
+        ]
+        packed = list(iter_packed_tokenized_rows(rows, sequence_length=2, include_labels=True))
+        self.assertGreaterEqual(len(packed), 2)
+        for row in packed:
+            self.assertEqual(len(row["input_ids"]), len(row["source_idx"]))
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Iterable, Mapping
+from typing import Any, Iterable, Iterator, Mapping
 
 from ..registry import build_training_manifest
 from .io import file_sha256
@@ -57,65 +57,107 @@ def stamp_corpus_rows(
     return stamped
 
 
+def _resolve_source_idx(
+    *,
+    source_id: str,
+    source_to_idx: Mapping[str, int],
+    unknown_source_policy: str,
+    fallback_source_id: str | None,
+) -> tuple[int | None, str]:
+    if source_id in source_to_idx:
+        return int(source_to_idx[source_id]), source_id
+
+    policy = unknown_source_policy.strip().lower()
+    if policy == "error":
+        raise ValueError(f"unknown source_id: {source_id}")
+    if policy == "skip":
+        return None, source_id
+    if policy == "fallback":
+        if not fallback_source_id:
+            raise ValueError("fallback_source_id is required when unknown_source_policy=fallback")
+        if fallback_source_id not in source_to_idx:
+            raise ValueError(f"fallback_source_id not found in source index table: {fallback_source_id}")
+        return int(source_to_idx[fallback_source_id]), fallback_source_id
+    raise ValueError(f"unknown_source_policy must be one of error|skip|fallback, got: {unknown_source_policy}")
+
+
+def iter_tokenized_stamped_rows(
+    stamped_rows: Iterable[Mapping[str, Any]],
+    *,
+    source_to_idx: Mapping[str, int],
+    tokenizer: TokenizerProtocol | None = None,
+    drop_empty: bool = True,
+    unknown_source_policy: str = "error",
+    fallback_source_id: str | None = None,
+) -> Iterator[dict[str, Any]]:
+    tok = tokenizer or SimpleWhitespaceTokenizer()
+
+    for row_no, row in enumerate(stamped_rows, start=1):
+        source_id_raw = str(row["source_id"])
+        resolved = _resolve_source_idx(
+            source_id=source_id_raw,
+            source_to_idx=source_to_idx,
+            unknown_source_policy=unknown_source_policy,
+            fallback_source_id=fallback_source_id,
+        )
+        source_idx, resolved_source_id = resolved
+        if source_idx is None:
+            # unknown_source_policy=skip
+            continue
+
+        input_ids = tok.encode(str(row["text"]))
+        if not input_ids and drop_empty:
+            continue
+        source_idx_arr = [source_idx] * len(input_ids)
+        yield {
+            "row_id": int(row.get("row_id", row_no)),
+            "source_id": resolved_source_id,
+            "input_ids": input_ids,
+            "source_idx": source_idx_arr,
+            "token_count": len(input_ids),
+        }
+
+
 def tokenize_stamped_rows(
     stamped_rows: Iterable[Mapping[str, Any]],
     *,
     source_to_idx: Mapping[str, int],
     tokenizer: TokenizerProtocol | None = None,
     drop_empty: bool = True,
+    unknown_source_policy: str = "error",
+    fallback_source_id: str | None = None,
 ) -> list[dict[str, Any]]:
-    tok = tokenizer or SimpleWhitespaceTokenizer()
-    tokenized: list[dict[str, Any]] = []
-
-    for row_no, row in enumerate(stamped_rows, start=1):
-        source_id = str(row["source_id"])
-        if source_id not in source_to_idx:
-            raise ValueError(f"row {row_no} uses unknown source_id: {source_id}")
-        source_idx = int(source_to_idx[source_id])
-
-        input_ids = tok.encode(str(row["text"]))
-        if not input_ids and drop_empty:
-            continue
-        source_idx_arr = [source_idx] * len(input_ids)
-        tokenized.append(
-            {
-                "row_id": int(row["row_id"]),
-                "source_id": source_id,
-                "input_ids": input_ids,
-                "source_idx": source_idx_arr,
-                "token_count": len(input_ids),
-            }
+    return list(
+        iter_tokenized_stamped_rows(
+            stamped_rows,
+            source_to_idx=source_to_idx,
+            tokenizer=tokenizer,
+            drop_empty=drop_empty,
+            unknown_source_policy=unknown_source_policy,
+            fallback_source_id=fallback_source_id,
         )
+    )
 
-    return tokenized
 
-
-def pack_tokenized_rows(
+def iter_packed_tokenized_rows(
     rows: Iterable[Mapping[str, Any]],
     *,
     sequence_length: int,
     drop_remainder: bool = False,
     include_labels: bool = False,
-) -> list[dict[str, Any]]:
+) -> Iterator[dict[str, Any]]:
+    """Stream packed rows to avoid holding full outputs in memory."""
     if sequence_length <= 0:
         raise ValueError("sequence_length must be > 0")
 
-    packed: list[dict[str, Any]] = []
     buffer_ids: list[int] = []
     buffer_src: list[int] = []
 
-    def flush_chunk(final: bool = False) -> None:
-        if not buffer_ids:
-            return
-        if final and drop_remainder and len(buffer_ids) < sequence_length:
-            return
-
-        take = sequence_length if len(buffer_ids) >= sequence_length else len(buffer_ids)
+    def make_chunk(take: int) -> dict[str, Any]:
         chunk_ids = buffer_ids[:take]
         chunk_src = buffer_src[:take]
         del buffer_ids[:take]
         del buffer_src[:take]
-
         chunk: dict[str, Any] = {
             "input_ids": chunk_ids,
             "source_idx": chunk_src,
@@ -123,7 +165,7 @@ def pack_tokenized_rows(
         }
         if include_labels:
             chunk["labels"] = list(chunk_ids)
-        packed.append(chunk)
+        return chunk
 
     for row_no, row in enumerate(rows, start=1):
         input_ids = row.get("input_ids")
@@ -136,10 +178,27 @@ def pack_tokenized_rows(
         buffer_ids.extend(int(token) for token in input_ids)
         buffer_src.extend(int(idx) for idx in source_idx)
         while len(buffer_ids) >= sequence_length:
-            flush_chunk(final=False)
+            yield make_chunk(sequence_length)
 
-    flush_chunk(final=True)
-    return packed
+    if buffer_ids and not (drop_remainder and len(buffer_ids) < sequence_length):
+        yield make_chunk(len(buffer_ids))
+
+
+def pack_tokenized_rows(
+    rows: Iterable[Mapping[str, Any]],
+    *,
+    sequence_length: int,
+    drop_remainder: bool = False,
+    include_labels: bool = False,
+) -> list[dict[str, Any]]:
+    return list(
+        iter_packed_tokenized_rows(
+            rows,
+            sequence_length=sequence_length,
+            drop_remainder=drop_remainder,
+            include_labels=include_labels,
+        )
+    )
 
 
 def validate_training_rows(rows: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
