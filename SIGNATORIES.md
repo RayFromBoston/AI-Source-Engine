@@ -2,7 +2,7 @@
 
 This file records supporters of the Open Letter:
 
-- `OPEN_LETTER.md`
+- `README.md`
 
 ## Sign by Pull Request
 
