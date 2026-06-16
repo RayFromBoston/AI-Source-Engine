@@ -1,4 +1,4 @@
-# An Open Letter to AI Regulators and Foundation Model Creators: End the Black Box
+# The Open Letter to Save Civilization: To Lawmakers, Regulators, and Foundation Model Creators
 
 Generative AI is currently driving toward a dual-threat crisis that threatens both the creator economy and the psychological autonomy of vulnerable users. The industry treats these as separate issues - one as a legal dispute over copyright, the other as an alignment or "safety" problem.
 
