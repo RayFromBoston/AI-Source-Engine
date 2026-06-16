@@ -1,167 +1,241 @@
-# COMPLETE REFERENCE: The Two Technical Parts, Exactly
+# COMPLETE REFERENCE: Full Explanation of the Two Technical Parts
 
-This is the direct explanation of the system, without assuming the reader has
-opened any other file.
+If you only read one file in this repository, this is the file to read.
+It is written to explain the system itself from first principles, in plain
+English, without requiring you to jump between other docs.
 
-You are correct: the technical system has two core parts.
+The core technical claim is simple:
 
-1. **Part 1: Inference attribution engine**
-   - reads attention numbers during generation
-   - outputs source contribution ratios in a receipt
-2. **Part 2: Training provenance pipeline**
-   - carries source vectors (`source_idx`) through training data preparation
-   - outputs training-ready data where every token still knows its source
+AI Source Engine has two real mechanisms.
 
-Everything else in this repo is support around those two parts.
+The first mechanism reads model attention during generation and turns that into
+source influence ratios.
+The second mechanism carries source identity through training data preparation
+so each token keeps provenance attached to it.
 
----
+Everything else in this repository exists to support, test, package, or expose
+those two mechanisms.
 
-## What problem this solves
+## What this project is actually for
 
-Most model stacks can generate text, but cannot prove where an answer came
-from. This creates an attribution gap.
+Most model systems today can answer questions but cannot show a reliable,
+machine-checkable "receipt" of where an answer came from. They can produce a
+citation-looking response, but there is usually no grounded data structure that
+proves source influence in the underlying generation process.
 
-This project closes that gap by:
+This repository exists to close that gap.
 
-- producing source-ratio receipts at inference time (Part 1), and
-- preserving per-token source identity in training data (Part 2).
+It does not pretend to solve every policy, social, or philosophical question
+about AI. It solves a very specific engineering and auditability problem:
+attach provenance to model behavior in a structured, reproducible way.
 
-So you get audit artifacts at both generation time and training-data time.
+To do that, it implements two technical parts:
 
----
+- Part 1 (inference-time attribution ratios)
+- Part 2 (training-time source-vector alignment)
 
-## PART 1: Read attention numbers and output source ratios
+Together, those two parts create a practical provenance layer.
 
-### What it takes in
+## Part 1 in plain language: read attention numbers, output source ratios
 
-For each decode step (each generated token), Part 1 needs:
+When a transformer model generates text, each new token is produced through a
+decode step. At each step, attention heads distribute weight over prior
+positions in context.
 
-- attention weights per head over prior positions
-- a `source_idx` value for each prior position
+Part 1 takes those raw attention weights and answers a direct question:
+"How much did each source influence this response?"
 
-So conceptually:
+### What Part 1 receives
 
-- `alpha_per_head[head][position] -> attention mass`
-- `context_source_idx[position] -> source ID integer`
+At minimum, Part 1 needs two things at decode time:
 
-### What it does
+1. Attention weights over context positions (per head, per step).
+2. A mapping from each context position to a source identity integer
+   (`source_idx`).
 
-For each decode step:
+That means each position is not just a token location. It is also tagged with
+where it came from.
 
-1. merge attention heads into one distribution over positions
-2. map positions to sources using `context_source_idx`
-3. sum attention mass into per-source buckets
+### What Part 1 computes
 
-Across the full response:
+For every decode step, the pipeline is:
 
-4. accumulate all per-step source buckets
-5. normalize to ratios that sum to approximately 1.0
-6. emit structured receipt JSON
+1. Merge attention heads into one distribution over positions.
+2. Use `source_idx` to map each position to a source bucket.
+3. Sum mass per source bucket for that step.
 
-### Tiny concrete example
+After all decode steps:
 
-Assume one decode step with 4 context positions:
+4. Add source buckets across steps.
+5. Normalize total source mass into ratios.
+6. Emit a receipt with source ratios and metadata.
 
-- `context_source_idx = [10, 10, 21, 21]`
-- merged attention over positions = `[0.2, 0.3, 0.1, 0.4]`
+The practical result is a numeric breakdown such as:
 
-Bucket by source:
+- source A: 0.62
+- source B: 0.27
+- source C: 0.11
 
-- source 10 gets `0.2 + 0.3 = 0.5`
-- source 21 gets `0.1 + 0.4 = 0.5`
+Those numbers are not "citation strings." They are derived from model attention
+flow and stored as a structured receipt object that can be validated and
+compared over time.
 
-If later steps lean more toward source 10, final normalized output might become:
+### What the Part 1 output is
 
-- source 10: 0.68
-- source 21: 0.32
+Part 1 produces a receipt JSON artifact. The exact schema is implemented in the
+SDK, but conceptually it contains:
 
-That is the ratio receipt.
+- model/run identity metadata
+- contributing sources
+- normalized ratio per source
+- invariants that can be checked by validation tooling
 
-### What it outputs
+This output is designed for machine workflows, not just human reading:
+store it, hash it, validate it, track drift, and use it in governance reports.
 
-A receipt object with:
+### Where Part 1 lives in the code
 
-- run/model metadata
-- list of contributing sources
-- ratio for each source
-- invariants (validated by tooling)
+The numerical logic is mainly in:
 
-### Where this logic lives in code
+- `src/al10/math.py`
+- `src/al10/receipt.py`
+- `src/al10/tracing.py`
 
-- `src/al10/math.py` (head merge + source bucketing)
-- `src/al10/receipt.py` (aggregate + normalize + receipt build)
-- `src/al10/tracing.py` (decode-step logging lifecycle)
-- `src/al10/adapters/*` (framework-specific wiring)
+Framework wiring for actual model stacks is in:
 
-### How to use Part 1 quickly
+- `src/al10/adapters/pytorch.py`
+- `src/al10/adapters/huggingface.py`
+- `src/al10/adapters/vllm.py`
 
-Minimal flow:
+CLI and API surfaces expose this for direct use:
 
-1. start trace
-2. log decode steps (attention tensors)
-3. finalize receipt
+- `al10 run-demo`
+- `al10 make-receipt`
+- `al10 serve-api`
 
-Quick run:
+## Part 2 in plain language: carry source vectors through training data
+
+Part 2 addresses a different failure mode.
+
+Even if you can attribute outputs at inference time, provenance often gets lost
+during training-data preprocessing. Raw text is tokenized, packed, shuffled, and
+rewritten into training format. If source identity is not carried in parallel
+with tokens, provenance disappears before training even starts.
+
+Part 2 prevents that loss.
+
+### What "put source vectors onto training data" actually means
+
+Every training row carries two aligned arrays:
+
+- `input_ids`: the token IDs fed to the model
+- `source_idx`: source identity per token
+
+Alignment is strict: index-by-index, token-by-token.
+
+If `input_ids[137]` is a token from source 21, then `source_idx[137]` must also
+equal 21. This alignment is the non-negotiable invariant.
+
+### What Part 2 takes in
+
+Part 2 requires:
+
+- a source registry (known sources and metadata),
+- corpus rows with source context,
+- tokenizer configuration,
+- packing/sharding configuration.
+
+### What Part 2 does end to end
+
+The training provenance pipeline performs these transformations:
+
+1. Build deterministic source index mapping.
+2. Stamp corpus rows with source IDs.
+3. Tokenize text.
+4. Expand source identity to token granularity.
+5. Pack fixed-length sequences.
+6. Validate that `len(input_ids) == len(source_idx)` for each row.
+7. Emit manifests and hashes for reproducibility/audit.
+
+By the end, you do not just have packed training data. You have packed training
+data with source lineage still attached at token level.
+
+### Why Part 2 matters operationally
+
+Without Part 2, provenance claims at training time are mostly trust statements.
+With Part 2, provenance can be inspected and verified as part of data QA,
+pipeline audits, or compliance review.
+
+It also enables quantitative reporting like source distribution by shard, by
+dataset slice, or by run.
+
+### Where Part 2 lives in the code
+
+Core implementation:
+
+- `src/al10/train/pipeline.py`
+- `src/al10/train/tokenizer.py`
+- `src/al10/train/io.py`
+- `src/al10/registry.py`
+
+Trainer consumption helpers:
+
+- `src/al10/train/integrations.py`
+
+CLI surface for pipeline execution:
+
+- `al10 train registry-index`
+- `al10 train stamp`
+- `al10 train pack`
+- `al10 train validate`
+- `al10 train manifest-build`
+- `al10 train report`
+
+## How the two parts work together in a real system
+
+Part 2 and Part 1 are not duplicates. They operate at different phases.
+
+Part 2 operates in the training data pipeline and preserves source lineage in
+the data you feed into training.
+
+Part 1 operates during generation and transforms live attention behavior into
+source influence ratios for each response.
+
+So the combined picture is:
+
+- training data remains provenance-aware before/through training prep,
+- generated outputs get source-ratio receipts at inference time,
+- both sides produce artifacts that can be validated and audited.
+
+That is the full technical model.
+
+## How to actually use this, without reading other docs
+
+You can use the system in three practical modes.
+
+### Mode A: prove Part 1 works in minutes
+
+Install and run demo:
 
 ```bash
 python3 -m pip install -e .
 al10 run-demo
 ```
 
-Integration examples:
+This executes the inference attribution flow and outputs a sample receipt.
+
+If you want to wire it into a generation loop, use one of:
 
 - `examples/pytorch_adapter_loop.py`
 - `examples/hf_generate_wrapper.py`
 - `examples/vllm_adapter_loop.py`
 
----
+### Mode B: prove Part 2 works on a small dataset
 
-## PART 2: Put source vectors onto training data
+Run the training provenance pipeline with `al10 train` commands to produce
+packed rows where `input_ids` and `source_idx` stay aligned.
 
-### What "put vectors onto training data" means
-
-Each token used for training gets a parallel source identity value.
-
-So every training row carries two aligned arrays:
-
-- `input_ids`: token IDs
-- `source_idx`: source IDs per token, same length
-
-If token 37 came from source 21, then `source_idx[37] == 21`.
-
-### What it takes in
-
-- source registry (source IDs and metadata)
-- raw corpus rows (text + source identity)
-- tokenizer configuration
-- packing configuration (sequence length, sharding options)
-
-### What it does
-
-1. build deterministic source index table
-2. stamp corpus rows with source IDs
-3. tokenize rows
-4. expand source labels to token level (1:1 alignment)
-5. pack tokens into fixed-length training rows
-6. validate invariant: `len(input_ids) == len(source_idx)` for every row
-7. emit manifests/hashes for reproducibility
-
-### Why this matters
-
-Without this, provenance is lost during data preprocessing.
-With this, source identity survives into the training-ready dataset.
-
-### Where this logic lives in code
-
-- `src/al10/train/pipeline.py`
-- `src/al10/train/tokenizer.py`
-- `src/al10/train/io.py`
-- `src/al10/train/integrations.py`
-- `src/al10/registry.py`
-
-### How to use Part 2 quickly
-
-High-level CLI flow:
+Typical flow:
 
 ```bash
 python3 -m al10.cli train registry-index --registry registry.jsonl --output index.json
@@ -171,49 +245,41 @@ python3 -m al10.cli train validate --input packed.jsonl
 python3 -m al10.cli train manifest-build --registry registry.jsonl --packed packed.jsonl --output training_manifest.json
 ```
 
-Then load packed rows into training stacks with helpers in
-`src/al10/train/integrations.py`.
+When validation passes, you have verified token/source alignment is intact.
 
----
+### Mode C: expose Part 1 behind an API
 
-## How the two parts fit together
+Run local API server:
 
-Part 2 (training provenance) makes source identity available and durable in data
-pipelines.
+```bash
+python3 -m al10.cli serve-api --host 127.0.0.1 --port 8765
+```
 
-Part 1 (inference attribution) uses source identity and attention behavior to
-produce output-time source influence receipts.
+Then submit payloads and receive receipts via HTTP.
+Optional API key and rate limiting controls are included for hardening.
 
-Combined outcome:
+## What this repository includes beyond the two technical parts
 
-- training data keeps source lineage
-- generated answers produce source-ratio receipts
-- both can be validated and audited
+The Open Letter and signatory flow are not the numerical core, but they are
+deliberately included so policy demand and implementation evidence ship together.
 
-That is the full technical system.
+Public/governance files:
 
----
+- `README.md` (open letter landing page)
+- `SIGNATORIES.md` (public sign workflow)
+- `.github/pull_request_template.md` (sign-by-PR support)
 
-## What is not core (supporting layer)
+Technical onboarding:
 
-These are important, but they are not the two core mechanisms:
+- `START_HERE.md`
 
-- `README.md` open letter and petition positioning
-- `SIGNATORIES.md` sign-by-PR workflow
-- CI, release workflow, docs navigation files
+Core context references on `main`:
 
-They support adoption and governance. The two core technical parts are still:
+- *The AGI Safety Bible*
+- *We All Die in the Dark*
 
-1. inference ratio engine
-2. training source-vector pipeline
+## One-sentence definition of the whole system
 
----
-
-## If someone wants to verify the system in 10 minutes
-
-1. Run demo receipt (`al10 run-demo`) to see Part 1 output.
-2. Run `al10 train ...` pipeline on tiny sample data to see Part 2 alignment.
-3. Check that packed rows preserve `len(input_ids) == len(source_idx)`.
-4. Inspect generated receipt and training manifest files.
-
-If those checks pass, they have seen both parts working.
+AI Source Engine is a two-part provenance system where training data keeps
+per-token source identity and generated outputs produce source-ratio receipts,
+so attribution can be audited instead of assumed.
