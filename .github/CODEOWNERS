@@ -1,0 +1,3 @@
+# Main protection baseline:
+# all changes require CODEOWNER review when branch rules enable it.
+* @RayFromBoston

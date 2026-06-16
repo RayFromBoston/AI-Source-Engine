@@ -15,6 +15,12 @@ see:
 
 - `COMPLETE_REFERENCE.md`
 
+## Protect the main branch
+
+If you are maintaining this repo and want to lock down `main`:
+
+- `PROTECT_MAIN.md`
+
 ## Core reference documents on `main`
 
 In addition to this implementation guide, the project context references:
