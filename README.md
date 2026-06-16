@@ -72,6 +72,8 @@ python3 -m unittest discover -s tests -v
 - `al10 validate-receipt`
 - `al10 validate-manifests`
 - `al10 init-plugin`
+- `al10 make-receipt`
+- `al10 serve-api`
 - `al10 bench-smoke`
 
 ## Documentation
@@ -79,6 +81,7 @@ python3 -m unittest discover -s tests -v
 - `docs/quickstart.md`
 - `docs/integrations.md`
 - `docs/engineering-guide.md`
+- `docs/http-api.md`
 - `docs/quality-and-ci.md`
 
 ## Repository layout

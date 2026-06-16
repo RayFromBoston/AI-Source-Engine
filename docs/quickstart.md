@@ -68,3 +68,15 @@ al10 bench-smoke --steps 1000 --heads 32 --key-len 1024
 ```
 
 Use this as a quick local check, not a replacement for production profiling.
+
+## 7) Build receipt from JSON payload
+
+```bash
+python3 -m al10.cli make-receipt --input tests/fixtures/golden_receipt_input.json
+```
+
+## 8) Run local HTTP API
+
+```bash
+python3 -m al10.cli serve-api --host 127.0.0.1 --port 8765
+```

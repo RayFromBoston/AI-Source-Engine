@@ -13,6 +13,7 @@ from .receipt import (
     build_receipt_model,
     response_ratio,
 )
+from .server import build_receipt_from_payload, create_demo_receipt, serve
 from .tracing import DecodeStepLogger, SourceTagSidecar
 from .validate import validate_manifest_hash, validate_receipt_dict, validate_receipt_file
 
@@ -36,9 +37,12 @@ __all__ = [
     "aggregate_decode_step",
     "build_receipt_model",
     "build_receipt",
+    "build_receipt_from_payload",
     "build_training_manifest",
+    "create_demo_receipt",
     "merge_query_heads",
     "response_ratio",
+    "serve",
     "source_bucket",
     "validate_manifest_hash",
     "validate_probability_sum",

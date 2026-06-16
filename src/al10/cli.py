@@ -9,9 +9,10 @@ import time
 from pathlib import Path
 from typing import Iterable
 
-from .receipt import aggregate_decode_step, build_receipt
+from .receipt import aggregate_decode_step
 from .registry import SourceRegistry, build_training_manifest
 from .scaffold import write_scaffold
+from .server import build_receipt_from_payload, create_demo_receipt, serve
 from .validate import validate_manifest_hash, validate_receipt_file, validate_registry_file
 
 
@@ -100,28 +101,7 @@ def cmd_stamp_dataset(args: argparse.Namespace) -> int:
 
 
 def cmd_run_demo(_: argparse.Namespace) -> int:
-    source_idx = [1, 1, 2, -1]
-    step_1_alpha_heads = [
-        [0.5, 0.2, 0.2, 0.1],
-        [0.4, 0.3, 0.2, 0.1],
-    ]
-    step_2_alpha_heads = [
-        [0.2, 0.1, 0.6, 0.1],
-        [0.3, 0.1, 0.5, 0.1],
-    ]
-
-    per_step = [
-        aggregate_decode_step(step_1_alpha_heads, source_idx),
-        aggregate_decode_step(step_2_alpha_heads, source_idx),
-    ]
-
-    receipt = build_receipt(
-        per_step,
-        {1: "sha256:source-a", 2: "sha256:source-b", -1: "PARAMETRIC"},
-        model_id="demo/al10-cli@v0",
-        registry_manifest_hash="sha256:registry-demo",
-        training_manifest_hash="sha256:training-demo",
-    )
+    receipt = create_demo_receipt()
     print(json.dumps(receipt, indent=2, sort_keys=True))
     return 0
 
@@ -151,6 +131,23 @@ def cmd_validate_manifests(args: argparse.Namespace) -> int:
 def cmd_init_plugin(args: argparse.Namespace) -> int:
     path = write_scaffold(args.framework, args.output)
     print(json.dumps({"ok": True, "path": str(path), "framework": args.framework}))
+    return 0
+
+
+def cmd_make_receipt(args: argparse.Namespace) -> int:
+    payload = json.loads(Path(args.input).read_text(encoding="utf-8"))
+    receipt = build_receipt_from_payload(payload)
+    output = Path(args.output) if args.output else None
+    if output:
+        output.write_text(json.dumps(receipt, indent=2, sort_keys=True), encoding="utf-8")
+        print(json.dumps({"ok": True, "output": str(output)}))
+    else:
+        print(json.dumps(receipt, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_serve_api(args: argparse.Namespace) -> int:
+    serve(args.host, args.port)
     return 0
 
 
@@ -229,6 +226,16 @@ def build_parser() -> argparse.ArgumentParser:
     init_plugin.add_argument("--framework", required=True, choices=["pytorch", "hf", "huggingface"])
     init_plugin.add_argument("--output", help="Output file path")
     init_plugin.set_defaults(func=cmd_init_plugin)
+
+    make_receipt = subparsers.add_parser("make-receipt", help="Build receipt from input JSON payload")
+    make_receipt.add_argument("--input", required=True, help="Path to receipt input JSON")
+    make_receipt.add_argument("--output", help="Optional output path for resulting receipt JSON")
+    make_receipt.set_defaults(func=cmd_make_receipt)
+
+    serve_api = subparsers.add_parser("serve-api", help="Run local AL-1.0 HTTP API server")
+    serve_api.add_argument("--host", default="127.0.0.1")
+    serve_api.add_argument("--port", type=int, default=8765)
+    serve_api.set_defaults(func=cmd_serve_api)
 
     bench = subparsers.add_parser("bench-smoke", help="Run decode-step benchmark smoke test")
     bench.add_argument("--steps", type=int, default=1000)

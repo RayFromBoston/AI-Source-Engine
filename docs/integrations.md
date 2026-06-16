@@ -74,3 +74,18 @@ Use one of:
 - Python: `from al10.validate import validate_receipt_dict`
 
 This is useful both in CI and before returning user-facing outputs.
+
+## HTTP API sandbox
+
+For quick local integration tests without embedding Python directly:
+
+```bash
+python3 -m al10.cli serve-api --host 127.0.0.1 --port 8765
+```
+
+Then call:
+
+- `GET /health`
+- `GET /v1/demo`
+- `POST /v1/receipt`
+- `POST /v1/validate-receipt`

@@ -95,6 +95,27 @@ class TestCli(unittest.TestCase):
         code = cli.main(["bench-smoke", "--steps", "10", "--heads", "4", "--key-len", "16"])
         self.assertEqual(code, 0)
 
+    def test_make_receipt(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            input_path = pathlib.Path(temp_dir) / "input.json"
+            output_path = pathlib.Path(temp_dir) / "receipt.json"
+            payload = {
+                "per_step_buckets": [
+                    {"1": 0.7, "2": 0.2, "-1": 0.1},
+                    {"1": 0.5, "2": 0.3, "-1": 0.2},
+                ],
+                "idx_to_source_id": {"1": "sha256:source-a", "2": "sha256:source-b", "-1": "PARAMETRIC"},
+                "model_id": "test/model@r1",
+                "registry_manifest_hash": "sha256:registry",
+                "training_manifest_hash": "sha256:training",
+            }
+            input_path.write_text(json.dumps(payload), encoding="utf-8")
+
+            code = cli.main(["make-receipt", "--input", str(input_path), "--output", str(output_path)])
+            self.assertEqual(code, 0)
+            receipt = json.loads(output_path.read_text(encoding="utf-8"))
+            self.assertEqual(receipt["receipt_spec"], "AL-1.0")
+
 
 if __name__ == "__main__":
     unittest.main()
