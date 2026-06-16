@@ -1,31 +1,30 @@
-# Start Guide (Production Use)
+# Start Guide (From Zero to Working)
 
-This guide is for the person who wants to use this project right now, from zero, without reverse-engineering the repo.
+If this is your first time here, read this like instructions from one person to another.
 
-## What this project does
+You do not need to know the full codebase first.
+You only need to know what this system is for and what to run.
 
-AI Source Engine gives you two things:
+## What this system does in plain language
 
-1. **Inference attribution receipts**
-   - during generation, it reads attention behavior and outputs source influence ratios
-2. **Training provenance alignment**
-   - during training ingest, it carries `source_idx` with tokens so source identity survives data preparation
+AI Source Engine does two practical jobs:
 
-If you run this correctly, you end up with auditable artifacts instead of trust-only claims.
+1. **When a model generates output, it can produce a receipt**
+   - the receipt says how much each source influenced the response
+2. **When you prepare training data, it keeps source identity attached to tokens**
+   - so provenance is not lost during tokenization/packing
 
-## What files matter first
+If this works correctly, you can audit source influence with real artifacts instead of guesses.
 
-If you are operating this system, these are the first files to care about:
+## What success looks like
 
-- `src/al10/cli.py` — command entrypoints (`al10 ...`)
-- `src/al10/receipt.py` — receipt construction logic
-- `src/al10/train/pipeline.py` — training provenance pipeline
-- `src/al10/server.py` — local HTTP API entrypoint
-- `examples/` — runnable integration examples
+You are successful when you can do all three:
 
-## Setup
+1. generate a receipt that shows source ratios,
+2. validate that receipt passes checks,
+3. produce packed training rows where `input_ids` and `source_idx` stay aligned.
 
-Install:
+## 1) Install
 
 ```bash
 python3 -m pip install -e .
@@ -37,47 +36,37 @@ Optional Hugging Face extras:
 python3 -m pip install -e ".[hf]"
 ```
 
-## Part 1: Run inference attribution
+If install fails, fix install first. Do not continue until this step works.
 
-### A) Fast demo
+## 2) Run a receipt demo (inference side)
 
 ```bash
 al10 run-demo
 ```
 
-Expected result:
+What you should see:
 
-- command prints a JSON receipt with `sources` and `ratio` values
-- ratios should sum to approximately `1.0`
+- JSON output in terminal
+- a `sources` list
+- `ratio` values that add up to about `1.0`
 
-### B) Validate a receipt
+If you do not see that, stop and fix this before moving on.
+
+## 3) Validate a receipt
 
 ```bash
 al10 validate-receipt path/to/receipt.json
 ```
 
-Expected result:
+What this confirms:
 
-- validation passes
-- no missing required fields
-- ratio sum invariant holds
+- required fields exist
+- source entries are shaped correctly
+- ratio sum is valid
 
-### C) Integrate into generation loop
+## 4) Run training provenance flow (training side)
 
-Use one of these example entrypoints:
-
-- `examples/pytorch_adapter_loop.py`
-- `examples/hf_generate_wrapper.py`
-- `examples/vllm_adapter_loop.py`
-
-What you should see:
-
-- decode steps are logged
-- a final receipt is produced at generation end
-
-## Part 2: Run training provenance pipeline
-
-Use this baseline flow:
+Run the baseline pipeline:
 
 ```bash
 python3 -m al10.cli train registry-index --registry registry.jsonl --output source_index_table.json
@@ -87,37 +76,59 @@ python3 -m al10.cli train validate --input packed.jsonl
 python3 -m al10.cli train manifest-build --registry registry.jsonl --packed packed.jsonl --output training_manifest.json
 ```
 
-Expected results:
+What you should see:
 
-- packed rows contain `input_ids` and `source_idx`
-- invariant `len(input_ids) == len(source_idx)` passes on validation
-- manifest is generated for audit/reproducibility
+- packed output rows containing `input_ids` and `source_idx`
+- validation passes
+- manifest file is generated
 
-## Optional: run local API mode
+Most important invariant:
+
+- `len(input_ids) == len(source_idx)` on every row
+
+## 5) Integrate with your generation stack
+
+Use the example that matches your stack:
+
+- `examples/pytorch_adapter_loop.py`
+- `examples/hf_generate_wrapper.py`
+- `examples/vllm_adapter_loop.py`
+
+What integration should do:
+
+1. start trace with source-index context
+2. log decode-step attention
+3. finalize receipt at generation end
+
+## 6) Optional API mode
+
+Run local server:
 
 ```bash
 python3 -m al10.cli serve-api --host 127.0.0.1 --port 8765
 ```
 
-Expected result:
+What you should confirm:
 
-- `/health` responds
-- `/v1/receipt` accepts payload and returns receipt JSON
+- health endpoint responds
+- receipt endpoint returns JSON receipt payload
 
-## Signatory flow
-
-To sign as a supporter:
-
-1. add one row in `SIGNATORIES.md`
-2. open a Pull Request
-
-## Final operational check
-
-Before shipping:
+## 7) Final pre-ship check
 
 ```bash
 python3 -m unittest discover -s tests -v
 al10 run-demo
 ```
 
-If tests pass and demo emits a valid receipt, the baseline deployment path is healthy.
+If tests pass and demo receipt is valid, baseline system is operational.
+
+## If you are stuck
+
+Keep the debug order simple:
+
+1. install works
+2. demo receipt works
+3. receipt validation works
+4. training validation works
+
+Do not skip ahead when one step is broken.

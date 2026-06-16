@@ -1,64 +1,105 @@
-# Engineering Guide (Complete)
+# Engineering Guide (How It Works Internally)
 
-This is the complete technical guide for how AI Source Engine works and how to integrate it.
+This guide is for engineers who want to inspect, modify, or rebuild the system.
 
-## System in one paragraph
+The goal here is not just to run commands. The goal is to understand the moving
+parts deeply enough to change them safely.
 
-AI Source Engine is a provenance layer for transformer models. It does two things:
+## Mental model first
 
-1. at inference time, it reads decode-step attention and computes per-source influence ratios
-2. at training ingest time, it carries source identity (`source_idx`) at token level so provenance survives data preparation
+Treat the system as two engines that share source identity:
 
-The output is auditable artifacts (receipts, manifests, validated aligned rows), not trust-only claims.
+1. **Inference engine**: turns live attention behavior into per-source ratios
+2. **Training ingest engine**: keeps source identity aligned with tokens through
+   preprocessing
 
-## Part 1: Inference attribution ratio engine
+If either engine is wrong, provenance trust breaks:
 
-### Inputs
+- inference wrong -> receipts are misleading
+- training ingest wrong -> source identity is corrupted before training
 
-- per-step attention weights (`alpha`) over key positions
-- source mapping per key position (`source_idx`)
+## Part 1 internals: inference attribution ratio engine
 
-### Math
+### Data entering this engine
 
-Per head:
+At each decode step:
+
+- attention weights by head over key positions
+- `source_idx` for each key position
+
+Conceptually:
+
+- `alpha_per_head[head][key_pos]`
+- `context_source_idx[key_pos]`
+
+### Core equations
+
+Per-head attention:
 
 \[
 \alpha_{h,i,j} = \mathrm{softmax}_j\left(\frac{q_{h,i}\cdot k_{h,j}}{\sqrt{d_k}}\right)
 \]
 
-Head merge:
+Merge heads (default policy):
 
 \[
 \alpha_{i,j} = \frac{1}{H}\sum_{h=1}^{H}\alpha_{h,i,j}
 \]
 
-Source bucket for generated token `i`:
+Bucket by source for generated token `i`:
 
 \[
 L_i(S) = \sum_{j:S(j)=S}\alpha_{i,j}
 \]
 
-Invariant:
+Per-step invariant:
 
 \[
 \sum_{S}L_i(S)\approx 1.0
 \]
 
-Full response ratio across `N` decode steps:
+Aggregate across `N` decode steps:
 
 \[
 \mathrm{Ratio}(S)=\frac{1}{N}\sum_{i=1}^{N}L_i(S)
 \]
 
-### Runtime flow
+### Runtime algorithm (practical)
 
-1. keep `source_idx` sidecar aligned to KV key positions
-2. at decode (`T_q = 1`), read attention after softmax
-3. merge heads and bucket by source
-4. append per-step buckets
-5. normalize and emit receipt
+For each generated token:
 
-### Receipt output (minimum shape)
+1. read per-head attention
+2. merge heads into one key-position distribution
+3. bucket mass by `source_idx`
+4. append per-step source bucket vector
+
+After generation ends:
+
+5. sum buckets across steps
+6. normalize to ratios
+7. map `source_idx` back to source IDs
+8. emit receipt JSON
+
+### Tiny numeric example
+
+One decode step:
+
+- `context_source_idx = [10, 10, 21, 21]`
+- merged attention = `[0.2, 0.3, 0.1, 0.4]`
+
+Bucket result:
+
+- source 10 = `0.2 + 0.3 = 0.5`
+- source 21 = `0.1 + 0.4 = 0.5`
+
+After many steps, normalized totals might be:
+
+- source 10 = 0.68
+- source 21 = 0.32
+
+That final vector is what becomes receipt source ratios.
+
+### Receipt shape (minimum)
 
 ```json
 {
@@ -76,55 +117,46 @@ Full response ratio across `N` decode steps:
 }
 ```
 
-Constraints:
+Hard constraints:
 
-- source ratios sum to 1.0 within float tolerance
-- `source_idx -> source_id` mapping happens before output
-- layer/policy stays stable and is documented per model release
+- source ratios sum to approximately 1.0
+- no missing source mapping at output time
+- stable layer/policy declaration per release
 
-### Tiny concrete example
+## Part 2 internals: training source-vector ingest engine
 
-Assume one decode step with 4 context positions:
+### Problem this solves
 
-- `context_source_idx = [10, 10, 21, 21]`
-- merged attention over positions = `[0.2, 0.3, 0.1, 0.4]`
+Raw text preprocessing can destroy provenance if source identity is not carried
+with tokens. Part 2 prevents that.
 
-Bucket by source:
+### Required output structure
 
-- source 10 gets `0.2 + 0.3 = 0.5`
-- source 21 gets `0.1 + 0.4 = 0.5`
-
-If later steps lean toward source 10, final normalized output might become:
-
-- source 10: 0.68
-- source 21: 0.32
-
-## Part 2: Training source-vector pipeline
-
-### Goal
-
-Keep provenance attached to tokens through training ingest.
-
-Each row must keep:
+Each training row must contain:
 
 - `input_ids`
 - `source_idx`
 
-with strict invariant:
+Hard invariant:
 
-- `len(input_ids) == len(source_idx)`
+- `len(input_ids) == len(source_idx)` for every row
 
-### Flow
+### Pipeline stages
 
-1. build source index table from registry
+1. build deterministic source index table from registry
 2. stamp corpus rows with source IDs
-3. tokenize rows
-4. expand source IDs to token level
+3. tokenize text
+4. expand source identity to token-level vector
 5. pack fixed-length sequences
-6. validate alignment invariant
-7. emit manifests + hashes + reports
+6. validate token/source length alignment
+7. emit manifests/hashes/reports
 
-### CLI sequence
+### Why this matters
+
+If token/source alignment breaks once, downstream attribution claims become
+unreliable. This invariant is the integrity boundary.
+
+### Baseline CLI sequence
 
 ```bash
 python3 -m al10.cli train registry-index --registry registry.jsonl --output source_index_table.json
@@ -135,27 +167,43 @@ python3 -m al10.cli train manifest-build --registry registry.jsonl --packed pack
 python3 -m al10.cli train report --input packed.jsonl --output source_report.json
 ```
 
-## Core code paths
+## Code map (where to edit what)
 
-- Part 1 math/receipts:
-  - `src/al10/math.py`
-  - `src/al10/receipt.py`
-  - `src/al10/tracing.py`
-- Adapters:
-  - `src/al10/adapters/pytorch.py`
-  - `src/al10/adapters/huggingface.py`
-  - `src/al10/adapters/vllm.py`
-- Part 2 training pipeline:
-  - `src/al10/train/pipeline.py`
-  - `src/al10/train/tokenizer.py`
-  - `src/al10/train/io.py`
-  - `src/al10/train/integrations.py`
-  - `src/al10/registry.py`
+Inference math and receipts:
 
-## What to run before shipping
+- `src/al10/math.py`
+- `src/al10/receipt.py`
+- `src/al10/tracing.py`
+
+Framework adapters:
+
+- `src/al10/adapters/pytorch.py`
+- `src/al10/adapters/huggingface.py`
+- `src/al10/adapters/vllm.py`
+
+Training ingest:
+
+- `src/al10/train/pipeline.py`
+- `src/al10/train/tokenizer.py`
+- `src/al10/train/io.py`
+- `src/al10/train/integrations.py`
+- `src/al10/registry.py`
+
+## Engineering checks before modifying behavior
+
+Before merging any algorithmic change:
+
+1. run tests
+2. run demo receipt
+3. validate packed training rows
+4. manually inspect one sample receipt for ratio sanity
+
+Commands:
 
 ```bash
 python3 -m unittest discover -s tests -v
 al10 run-demo
 python3 -m al10.cli train validate --input packed.jsonl
 ```
+
+If these pass and invariants remain true, change is usually safe to review.
