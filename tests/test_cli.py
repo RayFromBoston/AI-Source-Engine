@@ -83,6 +83,18 @@ class TestCli(unittest.TestCase):
             content = path.read_text(encoding="utf-8")
             self.assertIn("PyTorchDecodeAdapter", content)
 
+    def test_init_plugin_hf(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = pathlib.Path(temp_dir) / "plugin_hf.py"
+            code = cli.main(["init-plugin", "--framework", "hf", "--output", str(path)])
+            self.assertEqual(code, 0)
+            content = path.read_text(encoding="utf-8")
+            self.assertIn("HuggingFaceGenerateAdapter", content)
+
+    def test_bench_smoke(self) -> None:
+        code = cli.main(["bench-smoke", "--steps", "10", "--heads", "4", "--key-len", "16"])
+        self.assertEqual(code, 0)
+
 
 if __name__ == "__main__":
     unittest.main()

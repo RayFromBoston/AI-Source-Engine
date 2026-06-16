@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import time
 from pathlib import Path
 from typing import Iterable
 
@@ -153,6 +154,40 @@ def cmd_init_plugin(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_bench_smoke(args: argparse.Namespace) -> int:
+    """
+    Quick decode logging benchmark for local sanity checks.
+
+    This is not a rigorous profiler, but it helps users verify that AL-1.0
+    aggregation remains lightweight in their environment.
+    """
+    key_len = args.key_len
+    heads = args.heads
+    steps = args.steps
+
+    source_idx = [1 if i % 3 == 0 else (2 if i % 3 == 1 else -1) for i in range(key_len)]
+    alpha_per_head = [[1.0 / key_len for _ in range(key_len)] for _ in range(heads)]
+
+    t0 = time.perf_counter()
+    for _ in range(steps):
+        _ = aggregate_decode_step(alpha_per_head, source_idx)
+    elapsed_ms = (time.perf_counter() - t0) * 1000.0
+
+    print(
+        json.dumps(
+            {
+                "ok": True,
+                "steps": steps,
+                "heads": heads,
+                "key_len": key_len,
+                "total_ms": elapsed_ms,
+                "avg_ms_per_step": elapsed_ms / steps if steps else 0.0,
+            }
+        )
+    )
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="al10", description="AL-1.0 starter toolkit")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -194,6 +229,12 @@ def build_parser() -> argparse.ArgumentParser:
     init_plugin.add_argument("--framework", required=True, choices=["pytorch", "hf", "huggingface"])
     init_plugin.add_argument("--output", help="Output file path")
     init_plugin.set_defaults(func=cmd_init_plugin)
+
+    bench = subparsers.add_parser("bench-smoke", help="Run decode-step benchmark smoke test")
+    bench.add_argument("--steps", type=int, default=1000)
+    bench.add_argument("--heads", type=int, default=32)
+    bench.add_argument("--key-len", type=int, default=1024)
+    bench.set_defaults(func=cmd_bench_smoke)
 
     return parser
 

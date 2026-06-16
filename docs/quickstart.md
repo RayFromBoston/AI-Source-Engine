@@ -60,3 +60,11 @@ al10 init-plugin --framework hf
 ```
 
 This creates starter code that follows the adapter lifecycle.
+
+## 6) Run performance smoke benchmark
+
+```bash
+al10 bench-smoke --steps 1000 --heads 32 --key-len 1024
+```
+
+Use this as a quick local check, not a replacement for production profiling.

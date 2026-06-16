@@ -1,0 +1,16 @@
+{
+  "per_step_buckets": [
+    { "1": 0.7, "2": 0.2, "-1": 0.1 },
+    { "1": 0.5, "2": 0.3, "-1": 0.2 }
+  ],
+  "idx_to_source_id": {
+    "1": "sha256:source-a",
+    "2": "sha256:source-b",
+    "-1": "PARAMETRIC",
+    "-2": "MODEL_OUTPUT"
+  },
+  "model_id": "golden/model@r1",
+  "registry_manifest_hash": "sha256:registry-golden",
+  "training_manifest_hash": "sha256:training-golden",
+  "layer_policy": "last_block_self_attn_mean_heads"
+}
