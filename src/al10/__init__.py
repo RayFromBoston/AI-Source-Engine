@@ -1,6 +1,6 @@
 """AL-1.0 attribution logging utilities."""
 
-from .adapters import BaseAL10Adapter, HuggingFaceGenerateAdapter, PyTorchDecodeAdapter
+from .adapters import BaseAL10Adapter, HuggingFaceGenerateAdapter, PyTorchDecodeAdapter, VLLMDecodeAdapter
 from .errors import AL10Error, AL10ValidationError, AdapterError, ReceiptValidationError, RegistryError
 from .math import merge_query_heads, source_bucket, validate_probability_sum
 from .models import AttributionReceipt, ReceiptSource, SourceRegistryEntry
@@ -13,9 +13,18 @@ from .receipt import (
     build_receipt_model,
     response_ratio,
 )
-from .server import build_receipt_from_payload, create_demo_receipt, serve
+from .server import (
+    AL10RequestHandler,
+    InMemoryRateLimiter,
+    ServerConfig,
+    build_handler,
+    build_receipt_from_payload,
+    create_demo_receipt,
+    serve,
+)
 from .tracing import DecodeStepLogger, SourceTagSidecar
 from .validate import validate_manifest_hash, validate_receipt_dict, validate_receipt_file
+from .version import __version__
 
 __all__ = [
     "AL10Error",
@@ -28,13 +37,18 @@ __all__ = [
     "MODEL_OUTPUT_SOURCE_IDX",
     "PARAMETRIC_SOURCE_ID",
     "PyTorchDecodeAdapter",
+    "VLLMDecodeAdapter",
     "ReceiptSource",
     "ReceiptValidationError",
     "RegistryError",
     "SourceRegistry",
     "SourceRegistryEntry",
     "SourceTagSidecar",
+    "AL10RequestHandler",
+    "InMemoryRateLimiter",
+    "ServerConfig",
     "aggregate_decode_step",
+    "build_handler",
     "build_receipt_model",
     "build_receipt",
     "build_receipt_from_payload",
@@ -44,6 +58,7 @@ __all__ = [
     "response_ratio",
     "serve",
     "source_bucket",
+    "__version__",
     "validate_manifest_hash",
     "validate_probability_sum",
     "validate_receipt_dict",

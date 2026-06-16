@@ -59,6 +59,12 @@ or:
 al10 init-plugin --framework hf
 ```
 
+or:
+
+```bash
+al10 init-plugin --framework vllm
+```
+
 This creates starter code that follows the adapter lifecycle.
 
 ## 6) Run performance smoke benchmark
@@ -78,5 +84,11 @@ python3 -m al10.cli make-receipt --input tests/fixtures/golden_receipt_input.jso
 ## 8) Run local HTTP API
 
 ```bash
-python3 -m al10.cli serve-api --host 127.0.0.1 --port 8765
+python3 -m al10.cli serve-api --host 127.0.0.1 --port 8765 --api-key demo-key --rate-limit-per-minute 120
+```
+
+## 9) Run end-to-end app example
+
+```bash
+PYTHONPATH=src python3 examples/e2e_http_app.py
 ```

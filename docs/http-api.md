@@ -9,6 +9,22 @@ Run:
 python3 -m al10.cli serve-api --host 127.0.0.1 --port 8765
 ```
 
+Enable auth + basic rate limiting:
+
+```bash
+python3 -m al10.cli serve-api \
+  --host 127.0.0.1 \
+  --port 8765 \
+  --api-key demo-key \
+  --rate-limit-per-minute 120
+```
+
+You can also provide auth key through env:
+
+```bash
+AL10_API_KEY=demo-key python3 -m al10.cli serve-api
+```
+
 ## Endpoints
 
 ### `GET /health`
@@ -55,6 +71,22 @@ Request body:
 Validate an already-built receipt object. Returns `{ "ok": true, "validated": true }`
 on success.
 
+## Auth
+
+When `--api-key` (or `AL10_API_KEY`) is set, all routes except `/health`
+require either:
+
+- `Authorization: Bearer <key>`
+- `X-API-Key: <key>`
+
+Invalid or missing key returns HTTP 401.
+
+## Rate limiting
+
+When `--rate-limit-per-minute` is greater than `0`, non-health routes are
+limited per client IP within a 60-second window. Exceeding limit returns
+HTTP 429.
+
 ## cURL examples
 
 ```bash
@@ -65,5 +97,6 @@ curl -s http://127.0.0.1:8765/v1/demo
 ```bash
 curl -s http://127.0.0.1:8765/v1/receipt \
   -H 'content-type: application/json' \
+  -H 'authorization: Bearer demo-key' \
   -d @tests/fixtures/golden_receipt_input.json
 ```

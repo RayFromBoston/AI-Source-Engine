@@ -4,7 +4,7 @@ import unittest
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 
-from al10.adapters import BaseAL10Adapter, HuggingFaceGenerateAdapter, PyTorchDecodeAdapter
+from al10.adapters import BaseAL10Adapter, HuggingFaceGenerateAdapter, PyTorchDecodeAdapter, VLLMDecodeAdapter
 from al10.errors import AdapterError
 
 
@@ -97,6 +97,25 @@ class TestAdapters(unittest.TestCase):
             training_manifest_hash="sha256:training",
             prompt_source_idx=[1, 1, -1],
             generation_kwargs={"max_new_tokens": 2},
+        )
+        self.assertIn("attribution_receipt", result)
+        self.assertEqual(result["attribution_receipt"]["receipt_spec"], "AL-1.0")
+
+    def test_vllm_adapter_layered_outputs(self) -> None:
+        adapter = VLLMDecodeAdapter.from_prompt_source_idx([1, 1, -1])
+        layered_outputs = [
+            [FakeTensor([[[[0.7, 0.2, 0.1]], [[0.6, 0.3, 0.1]]]])],
+            [FakeTensor([[[[0.3, 0.2, 0.2, 0.3]], [[0.2, 0.3, 0.2, 0.3]]]])],
+        ]
+        buckets = adapter.log_decode_steps_from_layered_outputs(layered_outputs)
+        self.assertEqual(len(buckets), 2)
+        result = adapter.finalize_generation_result(
+            text="hello world",
+            token_ids=[10, 11, 12],
+            idx_to_source_id={1: "sha256:a", -1: "PARAMETRIC", -2: "MODEL_OUTPUT"},
+            model_id="fake/vllm@r1",
+            registry_manifest_hash="sha256:registry",
+            training_manifest_hash="sha256:training",
         )
         self.assertIn("attribution_receipt", result)
         self.assertEqual(result["attribution_receipt"]["receipt_spec"], "AL-1.0")

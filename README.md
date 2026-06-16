@@ -9,7 +9,7 @@ This project is a practical AL-1.0 starter kit for people who want to:
 It includes:
 
 - a hardened core SDK (`al10`)
-- framework adapters (base, PyTorch, Hugging Face wrapper)
+- framework adapters (base, PyTorch, Hugging Face wrapper, vLLM helper)
 - CLI tools for registry/dataset/validation workflows
 - tests and integration scaffolds
 
@@ -63,6 +63,7 @@ python3 -m unittest discover -s tests -v
   - `finalize_receipt(...)`
 - `PyTorchDecodeAdapter`: logs from tensor-shaped attention outputs
 - `HuggingFaceGenerateAdapter`: wraps `model.generate(...)` for quick experiments
+- `VLLMDecodeAdapter`: serving-oriented helper for vLLM-style decode loops
 
 ## CLI commands
 
@@ -82,6 +83,7 @@ python3 -m unittest discover -s tests -v
 - `docs/integrations.md`
 - `docs/engineering-guide.md`
 - `docs/http-api.md`
+- `docs/e2e-app.md`
 - `docs/quality-and-ci.md`
 
 ## Repository layout
@@ -89,3 +91,4 @@ python3 -m unittest discover -s tests -v
 - `src/al10/` - SDK, adapters, CLI, validators, scaffolding
 - `examples/` - runnable examples
 - `tests/` - unit tests and command coverage
+- `CHANGELOG.md` - release history

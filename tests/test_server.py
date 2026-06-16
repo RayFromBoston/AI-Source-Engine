@@ -4,15 +4,28 @@ import json
 import threading
 import unittest
 from http.server import ThreadingHTTPServer
-from urllib import request
+from urllib import error, request
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 
-from al10.server import AL10RequestHandler, build_receipt_from_payload, create_demo_receipt
+from al10.server import (
+    AL10RequestHandler,
+    ServerConfig,
+    build_handler,
+    build_receipt_from_payload,
+    create_demo_receipt,
+)
 from al10.validate import validate_receipt_dict
 
 
 class TestServerHelpers(unittest.TestCase):
+    def _start_server(self, handler_class):
+        server = ThreadingHTTPServer(("127.0.0.1", 0), handler_class)
+        port = int(server.server_address[1])
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        return server, thread, port
+
     def test_create_demo_receipt(self) -> None:
         receipt = create_demo_receipt()
         self.assertEqual(receipt["receipt_spec"], "AL-1.0")
@@ -40,10 +53,7 @@ class TestServerHelpers(unittest.TestCase):
             build_receipt_from_payload({"model_id": "x"})
 
     def test_http_server_routes(self) -> None:
-        server = ThreadingHTTPServer(("127.0.0.1", 0), AL10RequestHandler)
-        port = int(server.server_address[1])
-        thread = threading.Thread(target=server.serve_forever, daemon=True)
-        thread.start()
+        server, thread, port = self._start_server(AL10RequestHandler)
         try:
             with request.urlopen(f"http://127.0.0.1:{port}/health", timeout=5) as response:
                 body = response.read().decode("utf-8")
@@ -68,6 +78,40 @@ class TestServerHelpers(unittest.TestCase):
             with request.urlopen(req, timeout=5) as response:
                 post_body = response.read().decode("utf-8")
             self.assertIn('"attribution_receipt"', post_body)
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=5)
+
+    def test_http_server_auth(self) -> None:
+        handler = build_handler(ServerConfig(api_key="secret-key"))
+        server, thread, port = self._start_server(handler)
+        try:
+            with self.assertRaises(error.HTTPError) as ctx:
+                request.urlopen(f"http://127.0.0.1:{port}/v1/demo", timeout=5)
+            self.assertEqual(ctx.exception.code, 401)
+
+            req = request.Request(
+                f"http://127.0.0.1:{port}/v1/demo",
+                headers={"Authorization": "Bearer secret-key"},
+            )
+            with request.urlopen(req, timeout=5) as response:
+                body = response.read().decode("utf-8")
+            self.assertIn('"ok": true', body)
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=5)
+
+    def test_http_server_rate_limit(self) -> None:
+        handler = build_handler(ServerConfig(rate_limit_per_minute=1))
+        server, thread, port = self._start_server(handler)
+        try:
+            with request.urlopen(f"http://127.0.0.1:{port}/v1/demo", timeout=5) as response:
+                _ = response.read().decode("utf-8")
+            with self.assertRaises(error.HTTPError) as ctx:
+                request.urlopen(f"http://127.0.0.1:{port}/v1/demo", timeout=5)
+            self.assertEqual(ctx.exception.code, 429)
         finally:
             server.shutdown()
             server.server_close()

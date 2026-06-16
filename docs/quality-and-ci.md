@@ -16,7 +16,16 @@ GitHub Actions workflow (`.github/workflows/ci.yml`) runs:
 - package install (`pip install -e .`)
 - full unittest suite
 - CLI smoke (`al10 run-demo`)
-- example smoke (`examples/pytorch_adapter_loop.py`)
+- example smoke (`examples/pytorch_adapter_loop.py`, `examples/vllm_adapter_loop.py`, `examples/e2e_http_app.py`)
+
+## Release workflow
+
+GitHub Actions release workflow (`.github/workflows/release.yml`) supports:
+
+- manual dispatch
+- automatic tag releases (`v*`)
+- source/wheel build via `python -m build`
+- artifact upload for release assets
 
 ## Recommended local checks
 

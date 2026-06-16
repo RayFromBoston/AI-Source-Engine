@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -14,6 +15,7 @@ from .registry import SourceRegistry, build_training_manifest
 from .scaffold import write_scaffold
 from .server import build_receipt_from_payload, create_demo_receipt, serve
 from .validate import validate_manifest_hash, validate_receipt_file, validate_registry_file
+from .version import __version__
 
 
 def _read_jsonl(path: Path) -> list[dict]:
@@ -147,7 +149,8 @@ def cmd_make_receipt(args: argparse.Namespace) -> int:
 
 
 def cmd_serve_api(args: argparse.Namespace) -> int:
-    serve(args.host, args.port)
+    api_key = args.api_key or os.getenv("AL10_API_KEY")
+    serve(args.host, args.port, api_key=api_key, rate_limit_per_minute=args.rate_limit_per_minute)
     return 0
 
 
@@ -187,6 +190,7 @@ def cmd_bench_smoke(args: argparse.Namespace) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="al10", description="AL-1.0 starter toolkit")
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     init_registry = subparsers.add_parser("init-registry", help="Create/append a source registry")
@@ -223,7 +227,7 @@ def build_parser() -> argparse.ArgumentParser:
     validate_manifests.set_defaults(func=cmd_validate_manifests)
 
     init_plugin = subparsers.add_parser("init-plugin", help="Generate framework integration scaffold")
-    init_plugin.add_argument("--framework", required=True, choices=["pytorch", "hf", "huggingface"])
+    init_plugin.add_argument("--framework", required=True, choices=["pytorch", "hf", "huggingface", "vllm"])
     init_plugin.add_argument("--output", help="Output file path")
     init_plugin.set_defaults(func=cmd_init_plugin)
 
@@ -235,6 +239,8 @@ def build_parser() -> argparse.ArgumentParser:
     serve_api = subparsers.add_parser("serve-api", help="Run local AL-1.0 HTTP API server")
     serve_api.add_argument("--host", default="127.0.0.1")
     serve_api.add_argument("--port", type=int, default=8765)
+    serve_api.add_argument("--api-key", help="Optional API key for Bearer/X-API-Key auth")
+    serve_api.add_argument("--rate-limit-per-minute", type=int, default=0)
     serve_api.set_defaults(func=cmd_serve_api)
 
     bench = subparsers.add_parser("bench-smoke", help="Run decode-step benchmark smoke test")

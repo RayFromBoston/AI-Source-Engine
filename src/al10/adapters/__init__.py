@@ -3,5 +3,6 @@
 from .base import BaseAL10Adapter
 from .huggingface import HuggingFaceGenerateAdapter
 from .pytorch import PyTorchDecodeAdapter
+from .vllm import VLLMDecodeAdapter
 
-__all__ = ["BaseAL10Adapter", "HuggingFaceGenerateAdapter", "PyTorchDecodeAdapter"]
+__all__ = ["BaseAL10Adapter", "HuggingFaceGenerateAdapter", "PyTorchDecodeAdapter", "VLLMDecodeAdapter"]

@@ -51,6 +51,23 @@ result = adapter.generate_with_receipt(
 )
 ```
 
+## vLLM-style integration helper
+
+```python
+from al10.adapters import VLLMDecodeAdapter
+
+adapter = VLLMDecodeAdapter.from_prompt_source_idx(prompt_source_idx)
+adapter.log_decode_steps_from_layered_outputs(decode_outputs, layer_selector=-1)
+result = adapter.finalize_generation_result(
+    text=generated_text,
+    token_ids=generated_token_ids,
+    idx_to_source_id=idx_to_source_id,
+    model_id="org/model@release",
+    registry_manifest_hash="sha256:...",
+    training_manifest_hash="sha256:...",
+)
+```
+
 ## Dataset stamping utility
 
 If your training rows already contain tokenized `input_ids`, use:
@@ -80,7 +97,7 @@ This is useful both in CI and before returning user-facing outputs.
 For quick local integration tests without embedding Python directly:
 
 ```bash
-python3 -m al10.cli serve-api --host 127.0.0.1 --port 8765
+python3 -m al10.cli serve-api --host 127.0.0.1 --port 8765 --api-key demo-key --rate-limit-per-minute 120
 ```
 
 Then call:

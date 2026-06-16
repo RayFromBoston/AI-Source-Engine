@@ -53,6 +53,27 @@ print(result["attribution_receipt"])
 """
 
 
+VLLM_TEMPLATE = """\
+from al10.adapters import VLLMDecodeAdapter
+
+prompt_source_idx = [...]  # one int source idx per prompt token
+adapter = VLLMDecodeAdapter.from_prompt_source_idx(prompt_source_idx)
+
+# Each decode step contains a sequence of per-layer attention tensors.
+adapter.log_decode_steps_from_layered_outputs(decode_outputs, layer_selector=-1)
+
+result = adapter.finalize_generation_result(
+    text=generated_text,
+    token_ids=generated_token_ids,
+    idx_to_source_id=idx_to_source_id,
+    model_id="org/model@release",
+    registry_manifest_hash="sha256:...",
+    training_manifest_hash="sha256:...",
+)
+print(result["attribution_receipt"])
+"""
+
+
 def write_scaffold(framework: str, output_path: str | None = None) -> Path:
     framework_key = framework.strip().lower()
     if framework_key == "pytorch":
@@ -60,8 +81,10 @@ def write_scaffold(framework: str, output_path: str | None = None) -> Path:
     elif framework_key in {"hf", "huggingface"}:
         template = HUGGINGFACE_TEMPLATE
         framework_key = "huggingface"
+    elif framework_key == "vllm":
+        template = VLLM_TEMPLATE
     else:
-        raise ValueError("framework must be one of: pytorch, hf, huggingface")
+        raise ValueError("framework must be one of: pytorch, hf, huggingface, vllm")
 
     path = Path(output_path or f"al10_plugin_{framework_key}.py")
     path.write_text(template, encoding="utf-8")

@@ -34,4 +34,7 @@ jobs:
         run: al10 run-demo
 
       - name: Run example smoke
-        run: PYTHONPATH=src python examples/pytorch_adapter_loop.py
+        run: |
+          PYTHONPATH=src python examples/pytorch_adapter_loop.py
+          PYTHONPATH=src python examples/vllm_adapter_loop.py
+          PYTHONPATH=src python examples/e2e_http_app.py

@@ -3,12 +3,47 @@
 from __future__ import annotations
 
 import json
+import time
+from collections import deque
+from dataclasses import dataclass
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Mapping
 
 from .receipt import aggregate_decode_step, build_receipt
 from .validate import validate_receipt_dict
+
+
+@dataclass(slots=True)
+class ServerConfig:
+    """Runtime configuration for local API server."""
+
+    host: str = "127.0.0.1"
+    port: int = 8765
+    api_key: str | None = None
+    rate_limit_per_minute: int = 0
+
+
+class InMemoryRateLimiter:
+    """Small in-memory fixed-window limiter keyed by client IP."""
+
+    def __init__(self, limit_per_minute: int) -> None:
+        self.limit_per_minute = max(0, int(limit_per_minute))
+        self.window_seconds = 60.0
+        self._events: dict[str, deque[float]] = {}
+
+    def allow(self, key: str, now: float | None = None) -> bool:
+        if self.limit_per_minute <= 0:
+            return True
+        timestamp = float(now if now is not None else time.time())
+        bucket = self._events.setdefault(key, deque())
+        threshold = timestamp - self.window_seconds
+        while bucket and bucket[0] < threshold:
+            bucket.popleft()
+        if len(bucket) >= self.limit_per_minute:
+            return False
+        bucket.append(timestamp)
+        return True
 
 
 def create_demo_receipt() -> dict[str, Any]:
@@ -87,7 +122,9 @@ def build_receipt_from_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
 class AL10RequestHandler(BaseHTTPRequestHandler):
     """Small JSON API around AL-1.0 demo and receipt generation."""
 
-    server_version = "AL10HTTP/0.1"
+    server_version = "AL10HTTP/0.2"
+    api_key: str | None = None
+    rate_limiter: InMemoryRateLimiter | None = None
 
     def _write_json(self, status: int, payload: Mapping[str, Any]) -> None:
         body = json.dumps(payload, sort_keys=True).encode("utf-8")
@@ -97,7 +134,34 @@ class AL10RequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _is_authorized(self) -> bool:
+        if not self.api_key:
+            return True
+        auth_header = self.headers.get("Authorization", "")
+        provided_key = self.headers.get("X-API-Key", "")
+        if auth_header.startswith("Bearer "):
+            provided_key = auth_header.split(" ", 1)[1].strip()
+        return provided_key == self.api_key
+
+    def _check_guards(self) -> bool:
+        # Keep /health open by default for liveness checks.
+        if self.path == "/health":
+            return True
+
+        if not self._is_authorized():
+            self._write_json(HTTPStatus.UNAUTHORIZED, {"ok": False, "error": "unauthorized"})
+            return False
+
+        if self.rate_limiter is not None:
+            client_ip = self.client_address[0] if self.client_address else "unknown"
+            if not self.rate_limiter.allow(client_ip):
+                self._write_json(HTTPStatus.TOO_MANY_REQUESTS, {"ok": False, "error": "rate limit exceeded"})
+                return False
+        return True
+
     def do_GET(self) -> None:  # noqa: N802 (HTTP handler naming)
+        if not self._check_guards():
+            return
         if self.path == "/health":
             self._write_json(HTTPStatus.OK, {"ok": True, "service": "al10-http"})
             return
@@ -107,6 +171,8 @@ class AL10RequestHandler(BaseHTTPRequestHandler):
         self._write_json(HTTPStatus.NOT_FOUND, {"ok": False, "error": "route not found"})
 
     def do_POST(self) -> None:  # noqa: N802 (HTTP handler naming)
+        if not self._check_guards():
+            return
         if self.path not in {"/v1/receipt", "/v1/validate-receipt"}:
             self._write_json(HTTPStatus.NOT_FOUND, {"ok": False, "error": "route not found"})
             return
@@ -134,10 +200,46 @@ class AL10RequestHandler(BaseHTTPRequestHandler):
         _ = format, args
 
 
-def serve(host: str = "127.0.0.1", port: int = 8765) -> None:
+def build_handler(config: ServerConfig) -> type[AL10RequestHandler]:
+    """Create configured request handler class for a specific server instance."""
+
+    limiter = InMemoryRateLimiter(config.rate_limit_per_minute) if config.rate_limit_per_minute > 0 else None
+
+    class ConfiguredHandler(AL10RequestHandler):
+        api_key = config.api_key
+        rate_limiter = limiter
+
+    return ConfiguredHandler
+
+
+def serve(
+    host: str = "127.0.0.1",
+    port: int = 8765,
+    *,
+    api_key: str | None = None,
+    rate_limit_per_minute: int = 0,
+) -> None:
     """Run local AL-1.0 HTTP server."""
-    with ThreadingHTTPServer((host, port), AL10RequestHandler) as server:
-        print(json.dumps({"ok": True, "service": "al10-http", "host": host, "port": port}))
+    config = ServerConfig(
+        host=host,
+        port=port,
+        api_key=api_key,
+        rate_limit_per_minute=rate_limit_per_minute,
+    )
+    handler = build_handler(config)
+    with ThreadingHTTPServer((config.host, config.port), handler) as server:
+        print(
+            json.dumps(
+                {
+                    "ok": True,
+                    "service": "al10-http",
+                    "host": config.host,
+                    "port": config.port,
+                    "auth": bool(config.api_key),
+                    "rate_limit_per_minute": config.rate_limit_per_minute,
+                }
+            )
+        )
         try:
             server.serve_forever()
         except KeyboardInterrupt:
