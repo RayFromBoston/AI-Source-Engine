@@ -115,3 +115,4 @@ python3 -m al10.cli train report \
 - The MVP tokenizer is deterministic and dependency-free (`simple-whitespace-v1`).
 - Optional HF tokenizer backend is supported via `--tokenizer-backend hf --tokenizer-name ...`.
 - Hard invariant: each row must satisfy `len(input_ids) == len(source_idx)`.
+- Trainer loop consumption helpers are documented in `docs/trainer-integrations.md`.

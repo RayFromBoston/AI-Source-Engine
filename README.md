@@ -88,6 +88,7 @@ python3 -m unittest discover -s tests -v
 - `docs/quality-and-ci.md`
 - `docs/release-and-packaging.md`
 - `docs/training-ingest-mvp.md`
+- `docs/trainer-integrations.md`
 
 ## Repository layout
 

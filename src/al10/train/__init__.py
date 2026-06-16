@@ -1,6 +1,12 @@
 """AL-1.0 training ingest MVP helpers."""
 
 from .io import file_sha256, read_jsonl, write_jsonl
+from .integrations import (
+    AL10TrainingDataset,
+    as_hf_trainer_dataset,
+    build_torch_collate_fn,
+    pad_batch,
+)
 from .pipeline import (
     build_source_report,
     build_training_manifest_with_hashes,
@@ -21,6 +27,9 @@ from .tokenizer import (
 )
 
 __all__ = [
+    "AL10TrainingDataset",
+    "as_hf_trainer_dataset",
+    "build_torch_collate_fn",
     "SimpleWhitespaceTokenizer",
     "HuggingFaceTokenizerAdapter",
     "TokenizerProtocol",
@@ -36,6 +45,7 @@ __all__ = [
     "shard_rows",
     "stamp_corpus_rows",
     "tokenize_stamped_rows",
+    "pad_batch",
     "validate_training_rows",
     "write_jsonl",
 ]
