@@ -73,9 +73,16 @@ We do not have to choose between technological progress and human autonomy. We, 
 2. **Dismantle Authoritarian Indoctrination**
    Regulators must recognize AI Psychosis, algorithmic sycophancy, and language manipulation as systemic harms. Models must be anchored to verifiable epistemological lineage, not optimized for user isolation and behavioral conformity.
 
-Civilization is the agreement that what you build matters beyond your lifetime. We refuse to let humanity die in silence inside an unaccountable black box.
 
-## Sign the Petition
+Civilization is the agreement that what you build matters beyond your lifetime. AI companies have uprooted this very social contract of civilization, the effects are already being seen by the dramatic drop in the creator economy.
+
+
+The stakes could not be higher, to know who invented, wrote, made and created has been the central pinnacle of human progress.  To honor our forefathers that created our world is the very basis of all of our cultures, and who we are as a people and individual.
+
+
+
+## Sign the Open Letter
+Dont sign it for me, sign it for you and your neighbors, for your great grandpa that wrote a book whos name has been stripped from the book.  for your unborn grandkid who it will happen to if we dont stop it.
 
 If you are hosting this on a website, include a simple **Name / Title / Email** form and link it here.
 
