@@ -6,7 +6,12 @@ If you arrived from the Open Letter in `README.md`, start here.
 
 ## Full system reference
 
-For a complete explanation of both the Open Letter/signatory system and the technical AL-1.0 stack:
+For the complete plain-English explanation of the two technical core parts:
+
+1. inference attribution ratio engine, and
+2. training source-vector pipeline,
+
+see:
 
 - `COMPLETE_REFERENCE.md`
 
