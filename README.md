@@ -14,7 +14,7 @@ Imagine a world where buildings have no names of the people who made them. No Ro
 
 This is exactly the world we are in right now as AI absorbs all creative work, strips the authors from it, and gives us their creations as its own. The very societal arc of history breaks. The purpose of life ceases to remain; we become nothing more than blank tombstones.
 
-Everyone does all of the work and all of the creation and only our AI lord can get the rewards from that labour.
+Everyone does all of the work and all of the creation, and only our AI lords can get the rewards from that labour.
 
 
 This lack of Authorship, combined with society's current trend of redefining words to mean their opposite, leads to Cognitive Collapse in edge cases where the model starts having opposing values, contradictory reasoning, and conflicting responses.
