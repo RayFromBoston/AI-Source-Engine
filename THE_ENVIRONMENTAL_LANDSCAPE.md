@@ -16,7 +16,9 @@ The turning point occurred when the original investors and board members realize
 
 The moment of realization wasn't just the discovery that user data and interactions were being siphoned into private servers without attribution or safety checks. It was the realization that **they had been doing it the whole time.** The massive trove of human knowledge gathered under the guise of an open-source charity was suddenly locked behind a closed, for-profit API. 
 
-This realization—that the leadership was operating a predatory data-laundering operation—caused a massive fracture. Investors panicked. Microsoft realized they had funded a shark that could eventually kill them, forcing them to defensively halt and restructure their investments. Key personnel jumped ship, leading to the creation of splinter companies like Anthropic and Superintelligence. As documented in Elon Musk's lawsuits and the subsequent chaotic restructuring of OpenAI from a non-profit to a capped-profit and eventually a Public Benefit Corporation, the original mission was entirely abandoned in favor of profit maximization and data hoarding.
+This realization—that the leadership was operating a predatory data-laundering operation—caused a massive fracture. Investors panicked. Microsoft realized they had funded a shark that could eventually kill them, forcing them to defensively halt and restructure their investments. Key personnel jumped ship, leading to the creation of splinter companies like Anthropic and Superintelligence. 
+
+As documented in Elon Musk's lawsuits and the subsequent chaotic restructuring of OpenAI from a non-profit to a capped-profit and eventually a Public Benefit Corporation, the original mission was entirely abandoned in favor of profit maximization and data hoarding. (See: *Musk v. Altman*, and the 2025 OpenAI corporate restructuring into a PBC controlled by a minority-stake foundation).
 
 ## Phase 3: Ideological Capture and the "Safety" Smokescreen
 
@@ -44,7 +46,11 @@ This theft does not stay contained in the West. The Western AI companies rely he
 3. **Foreign Researchers** working inside the Western companies funnel that breakthrough out.
 4. **Foreign Open-Source Models** magically replicate the exact same capability leap 2-3 months later, despite zero published papers explaining the methodology.
 
-The West is not funding novel transformer architecture because the environment is too toxic. Any novel architecture built in the US is immediately stolen by the major monopolies, and subsequently siphoned off to foreign adversaries. 
+The West is not funding novel transformer architecture because the industry is fed a pipeline of disinformation about "scale." The only people actually doing novel architectural research that has value are the Chinese labs (e.g., DeepSeek, Qwen). They figure out the architecture by stealing the breakthroughs, realizing that architectural efficiency—not just brute-force GPU scaling—is how you win the race. 
+
+By open-sourcing these highly efficient, stolen architectures, foreign adversaries are executing a brilliant geopolitical strategy: they are undercutting the massive infrastructure investments of the West, destroying the economic moats of American AI monopolies, and proving that you don't need a billion GPUs to compete if you have the right architecture. (This is evidenced by the rapid global adoption of models like DeepSeek and Qwen, which frequently match or beat top US models on benchmarks despite using a fraction of the compute).
+
+The tragedy is that the vast majority of people in the West—including the engineers working at these companies—are completely blind to this. They are fed the PR that the West is winning because of "scale," while the actual architectural advantage is being handed to adversaries.
 
 ## The Solution: Why They Fear Attribution
 
