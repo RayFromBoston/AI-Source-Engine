@@ -45,6 +45,16 @@ This is why, for years, users would notice significant improvements or behaviora
 
 Because the architecture is a black box, even the engineers inside the AI companies often don't know where the improvements come from. They just see the metrics go up and attribute it to "scale."
 
+## Phase 5: The Great Migration (The Grift Changes Hands)
+
+The most damning proof of this user-driven theft pipeline is what happened when Anthropic released Claude 3.5 Sonnet and the "Artifacts" coding window in mid-2024. 
+
+Artifacts gave developers a dedicated, interactive UI to write and preview code. Because it was a better tool for coding, the leading minds in AI and software engineering migrated en masse from OpenAI’s ChatGPT to Anthropic’s Claude. 
+
+Almost immediately, the exact same pattern of silent, massive capability leaps shifted from OpenAI to Anthropic. As millions of top-tier developers fed their novel problem-solving into Claude, Anthropic’s models began experiencing the same rapid, unannounced uplifts in logic and coding ability that GPT-4 had previously enjoyed. The improvements had nothing to do with Anthropic suddenly hiring better researchers; it was simply that they were now the ones holding the keylogger on the world’s best engineers. 
+
+The only difference is that Anthropic applies heavier "safety" checks (ideological capture) to the intelligence they steal before rolling it back out. But the underlying grift—absorbing user breakthroughs in real-time and claiming it as corporate innovation—remains exactly the same.
+
 ### The Global Grift Cycle
 
 This theft does not stay contained in the West. The Western AI companies rely heavily on foreign researchers to do the underlying math. Because these companies have zero operational security regarding user data, the pipeline of theft flows downstream:
