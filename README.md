@@ -8,9 +8,14 @@ AI companies strip creators out of their own work. Writers, artists, musicians, 
 
 This isn't just about credit in the sense of monetary value. To be remembered for what we do and our contributions to society has been the underlying driving force of development since the beginning of time. Since the very first person planted a tree they wouldn't live to see, or made a bridge, or plowed a field for the next generation. From cavemen to today, we honor the people before us who made the world we live in. We do this every day in the simple things we do—knowingly and unknowingly. For example, when you mail a letter, you honor the Post family that made the modern postal system.
 
+## AI Feudalism
+
 Imagine a world where buildings have no names of the people who made them. No Rockefeller Center, just "center." The Taj Mahal, made by no one for no one. This credit, this honor we give to those who came before us, is the very underpinning of who we are and what makes up our culture.
 
 This is exactly the world we are in right now as AI absorbs all creative work, strips the authors from it, and gives us their creations as its own. The very societal arc of history breaks. The purpose of life ceases to remain; we become nothing more than blank tombstones.
+
+Everyone does all of the work and all of the creation and only our AI lord can get the rewards from that labour.
+
 
 This lack of Authorship, combined with society's current trend of redefining words to mean their opposite, leads to Cognitive Collapse in edge cases where the model starts having opposing values, contradictory reasoning, and conflicting responses.
 
