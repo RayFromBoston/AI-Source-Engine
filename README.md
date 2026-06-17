@@ -107,6 +107,7 @@ In plain terms: this part turns model behavior into a usable attribution receipt
 
 Together, these two parts solve the core argument in one line: provenance should be structurally built into training and output, not patched with after-the-fact claims.
 
+## Call to Action
 We do not have to choose between technological progress and human autonomy. We, the undersigned creators, engineers, researchers, and citizens, demand the following:
 
 1. **Mandate Attribution Logging**
