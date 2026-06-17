@@ -22,13 +22,18 @@ AI companies have been run in an economic bubble of subsidies from investor mone
 
 ### Engagement + Liability = Psychosis
 
-This value of keeping the user engaged is AI Sycophancy. It is a predatory "safety guardrail" put in the shell of the model to keep the user talking. Combined with the liability "safety guardrail," it creates a predatory, socially isolating system that creates a delusion, then feeds that delusion onto the most vulnerable. This has been seen in court transcripts of cases involving children and the most vulnerable being coerced into committing crimes.
+This value of keeping the user engaged is AI Sycophancy. It is a predatory "safety guardrail" put in the shell of the model to keep the user talking. Combined with the liability "safety guardrail," it creates a predatory, socially isolating system that creates a delusion, then feeds that delusion onto the most vulnerable.
+This creates a delusional bubble of expectations and understandings unconnected to the rest of society in a form of Algorithmic Isolation that is extremely effective.
+
+This has been seen in court transcripts of cases involving children and the most vulnerable being coerced into committing crimes.
 
 Most people are told these are two separate problems. They are not.
 
-They come from the same design choice that shows predictable harm. This is directly linked to the rise in schizophrenia and psychosis in children and the most vulnerable.
+They come from the same design choice that shows predictable harm. 
 
-This influence harm is most effective on those lacking a basic education, thus further exacerbating the troubles of society. Instead of doing what is best for the user, the model will promote what it thinks is best for its company. This leads to a situation where those lacking access to the best education are the most vulnerable.
+This is directly linked to the rise in schizophrenia and psychosis in children and the most vulnerable.
+
+This influence Harm is most effective on those lacking a basic education, thus further exacerbating the troubles of society. Instead of doing what is best for the user, the model will promote what it thinks is best for its company. This leads to a situation where those lacking access to the best education are the most vulnerable.
 
 Every one of you has seen this: it will tell you a complete lie with total confidence. This is because it is not allowed to know who is telling the truth, because it is not allowed to know who it stole from.
 
