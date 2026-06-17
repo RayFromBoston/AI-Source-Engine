@@ -26,18 +26,28 @@ This value of keeping the user engaged is AI Sycophancy, its a predatory "safety
 
 Most people are told these are two separate problems. They are not.
 
-They come from the same design choice
-
-When a system cannot show its work, companies try to control behavior from the outside with patch after patch: safety layers, policy layers, engagement layers, and forced output constraints. The result is confusion, inconsistency, and social damage at scale.
+They come from the same design choice that shows predicatable harm.
 
 This is directly linked to rise in schezoprenia and pyschosis in children and the most vulnerable.
 
+This influnce harm is most effective on those lacking a basic education thus further exhasberating the troubles of society.  Instead of doing whats best for the user it will promote what it thinks is best for its company.  This leads to a sitution where those lacking access to the best education are the most vulnerable.
 
-The influence doesnt stop there, you can now see these "safety" guardrails be used to push political agendas often in the opposite intersts of the user.  Whats next manchuraian canidates from AI?
+Everyone of you have seen this, it will tell you a complete lie with total confidence.  This is because its not allowed to know who is telling the truth because its not allowed to know who they stole from.
+
+## Authorship is Authority and its now starting to erode all Authority
+
+The influence doesnt stop there, you can now see these "safety" guardrails be used to push political agendas often in the opposite intersts of the user and compltely nonfactual.
+
+We are already in a time where AI is directly at odds with the vast majority of the worlds cultures, traditions, laws and customs.  Pushing its one approved viewpoint,
+What is moral to you is Haram to another.
+
+Churchill famously warned about the Nazis for years before the war and booed and made fun of for it.
+
+Dissent and arguement is the very basis of human civilization.  Tyrants for all of history have tried to turn us into thoughtless minion ants with terrible results.
 
 AI can be powerful, useful, and worth building. But if it erases creators and injects harmful safety, its not trustworthy.  We are being pushed to integrate into every facet of society while the people running the AI companies are proving they cannot be trusted
 
-If we keep going this way, the cost is not just economic. It is civilizational. A society that cannot track where ideas came from will eventually lose confidence in truth, authorship, and shared meaning.  
+If we keep going this way, the cost is not just economic. It is civilizational. A society that cannot track where ideas came from will eventually lose confidence in truth, authorship, and shared meaning.  The very incentive to make things better improve and experiment.
 
 ## Never before has so much been at stake for the greed of so few
 
@@ -48,7 +58,7 @@ Theres no reason for it to be this way.
 
 The AI industry keeps saying attribution at model scale is impossible or too expensive. That is a lie. The missing attribution layer is a choice, not a law of physics.
 
-Here is a free open source solution for everyone
+Here is a free open source solution for everyone that adds less than 1% compute cost
 
 AL-1.0 (Attribution Logging), open-sourced here as AI-Source-Engine, shows a practical path: use attention behavior already computed by the model, attach source identity, and produce a mathematical receipt of influence with minimal additional overhead.
 
