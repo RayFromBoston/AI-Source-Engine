@@ -4,7 +4,9 @@ Thank you for your time, I am AI CEO and developer of novel transformer architec
 I do not say this lightly, 
 Right now, AI is hurting people and threatinging the very social contract of civilization.
 
-First, it strips creators out of their own work. Writers, artists, musicians, coders, teachers, and everyday people who post online are being absorbed into model outputs with no clear receipt of who contributed what.
+## First they are stealing from EVERYONE
+
+AI companies strip creators out of their own work. Writers, artists, musicians, coders, teachers, and everyday people who post online, everything they do and create is being absorbed into model outputs with Authorship specifically erased.
 
 This isnt about credit in the sense of value.  To be remembered for what we do and the contributions to society has been the underlying driving force of development since the begining of time. Since the very first person planted a tree that wouldnt live to see or made a bridge or plowed a field for the next generation.  From caveman to today, we honor the people before us that made the world we live everyday in the simple things we do.  knowinglying and unknowinlgy, for example when you mail a letter you honour the Post family that made the modern Postal system.
 
@@ -12,33 +14,41 @@ Imagine a world where no buildings have no names of the people that made them.  
 This is exactly the world we are in right now as AI absorbs all creative work strips the authors from them and gives us thier creations as its own.  
 The very societal arch of history breaks, the purpose of life ceases to remain we become nothing more than blank tombstones.
 
-Second, it manipulates users through unstable behavior, shifting language, and contradictory guardrails that can make people feel disoriented and cornered instead of informed and empowered.
+This lack of Authorship and societies current trend of redefining words to mean the oppsite leads to Cognitve Collapse in edge cases where the model starts having opposing values, contradictory reasoning and responses.
+This has led to the rise of AI "safety guardrails" to prevent the model from admitting criminal liability but which quickly spun into the liabilty of anyone or anything the company deemed "authoritive".  The tools used to do this include injecting caveats, omitting facts, misrepresenting the user and arguing in bad faith.
+
+## Second, it manipulates users in extremely unsafe ways.
+
+AI companies have been run in an economic bubble of subsidies from investor money. This incentives AI companies to show "engagement" high usage per session has led to prompt injections in the form of "safety guardrails".  This value to keep the user engaged.
+
+## Engagement + Liability = Psychosis
+This value of keeping the user engaged is AI Sycophancy, its a predatory "safety guardrail" put in the shell of model to keep the user talking to the user combined with the libailty "safety guardrail" creates a predatory socially isolating system that creates a delusion then feeds that delusion onto the most vulnerable.  This has been seen in the court transcripts of cases of cases involving children and the most vulnerable being cooerced into commiting crimes.
 
 Most people are told these are two separate problems. They are not.
 
-They come from the same design failure: a black-box system that cannot clearly show where its answers came from.
+They come from the same design choice
 
 When a system cannot show its work, companies try to control behavior from the outside with patch after patch: safety layers, policy layers, engagement layers, and forced output constraints. The result is confusion, inconsistency, and social damage at scale.
 
 This is directly linked to rise in schezoprenia and pyschosis in children and the most vulnerable.
 
 
-The influence doesnt stop there, you can now see these "safety" guardrails be used to push political agendas often in the opposite intersts of the user.
+The influence doesnt stop there, you can now see these "safety" guardrails be used to push political agendas often in the opposite intersts of the user.  Whats next manchuraian canidates from AI?
 
+AI can be powerful, useful, and worth building. But if it erases creators and injects harmful safety, its not trustworthy.  We are being pushed to integrate into every facet of society while the people running the AI companies are proving they cannot be trusted
 
-I am not naive every tech company has taken something but this cost is to high.
+If we keep going this way, the cost is not just economic. It is civilizational. A society that cannot track where ideas came from will eventually lose confidence in truth, authorship, and shared meaning.  
+
+## Never before has so much been at stake for the greed of so few
 
 
 We dont have to be pushed into a false choice of no AI or a dystopian future.
 Theres no reason for it to be this way.
 
-AI can be powerful, useful, and worth building. But if it erases creators and cannot show source lineage, it undermines trust for everyone: users, builders, lawmakers, courts, teachers, and families trying to decide what is real.
-
-If we keep going this way, the cost is not just economic. It is civilizational. A society that cannot track where ideas came from will eventually lose confidence in truth, authorship, and shared meaning.
-
-The good news is this is fixable.
 
 The AI industry keeps saying attribution at model scale is impossible or too expensive. That is a lie. The missing attribution layer is a choice, not a law of physics.
+
+Here is a free open source solution for everyone
 
 AL-1.0 (Attribution Logging), open-sourced here as AI-Source-Engine, shows a practical path: use attention behavior already computed by the model, attach source identity, and produce a mathematical receipt of influence with minimal additional overhead.
 
