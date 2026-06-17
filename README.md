@@ -1,5 +1,15 @@
 # The Open Letter to Save Civilization: To Lawmakers, Regulators, and Foundation Model Creators
 
+## File Guide
+- **[README.md](README.md)** - The Open Letter
+- **[THE_HISTORY_OF_AI.md](THE_HISTORY_OF_AI.md)** - How AI companies actually work
+- **[LICENSE](LICENSE)** - Free for All
+- **[ENGINEERING_GUIDE.md](ENGINEERING_GUIDE.md)** - Technical implementation details
+- **[START_GUIDE.md](START_GUIDE.md)** - Quick start instructions
+- **[SIGNATORIES.md](SIGNATORIES.md)** - List of signers
+
+---
+
 Thank you for your time. I am an AI CEO and the developer of a novel transformer architecture. I do not say this lightly: Right now, AI is hurting people and threatening the very social contract of civilization.
 
 ## First, they are stealing from EVERYONE
