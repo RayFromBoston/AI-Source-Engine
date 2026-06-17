@@ -56,9 +56,9 @@ We dont have to be pushed into a false choice of no AI or a dystopian future.
 Theres no reason for it to be this way.
 
 
-The AI industry keeps saying attribution at model scale is impossible or too expensive. That is a lie. The missing attribution layer is a choice, not a law of physics.
+The AI industry keeps saying attribution at model scale is impossible or too expensive. That is a design choice not fact. The missing attribution layer is a choice, not a law of physics.
 
-Here is a free open source solution for everyone that adds less than 1% compute cost
+Here is a free open source solution for everyone that adds less than 1% compute cost, there might even be a simpler cheaper solution.  I just think we can all agree we need a solution now.
 
 AL-1.0 (Attribution Logging), open-sourced here as AI-Source-Engine, shows a practical path: use attention behavior already computed by the model, attach source identity, and produce a mathematical receipt of influence with minimal additional overhead.
 
