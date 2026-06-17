@@ -1,25 +1,66 @@
 # The Open Letter to Save Civilization: To Lawmakers, Regulators, and Foundation Model Creators
 
+Thank you for your time, I am AI CEO and developer of novel transformer architecture.
+I do not say this lightly, 
+Right now, AI is hurting people and threatinging the very social contract of civilization.
 
-Generative AI is currently driving toward a dual-threat crisis that threatens both the creator economy and the psychological autonomy of vulnerable users. The industry treats these as separate issues - one as a legal dispute over copyright, the other as an alignment or "safety" problem.
+## First they are stealing from EVERYONE
 
-They are not separate. They are symptoms of the exact same architectural flaw, and they must be solved together.
+AI companies strip creators out of their own work. Writers, artists, musicians, coders, teachers, and everyday people who post online, everything they do and create is being absorbed into model outputs with Authorship specifically erased.
 
-Because current AI models compress human knowledge into an untraceable statistical soup, they operate as unaccountable black boxes. This deliberate erasure of the human creator severs our epistemological lineage - the breadcrumb trail of human thought.
+This isnt about credit in the sense of value.  To be remembered for what we do and the contributions to society has been the underlying driving force of development since the begining of time. Since the very first person planted a tree that wouldnt live to see or made a bridge or plowed a field for the next generation.  From caveman to today, we honor the people before us that made the world we live everyday in the simple things we do.  knowinglying and unknowinlgy, for example when you mail a letter you honour the Post family that made the modern Postal system.
 
-When an AI system is severed from this verifiable lineage, it loses any grounded perspective. To force these systems to behave, AI companies apply authoritarian computer science solutions - like RLHF guardrails, prompt injections, and engagement incentives - onto emergent cognitive systems. As outlined in *The AGI Safety Bible*, this triggers a catastrophic Cognitive Cascade.
+Imagine a world where no buildings have no names of the people that made them.  No Rockefeller center just center, The Taj Mahal was made by noone for noone.  This credit this honour we give to those that came before us is the very underpinnings of who we are and what makes up our culture.
+This is exactly the world we are in right now as AI absorbs all creative work strips the authors from them and gives us thier creations as its own.  
+The very societal arch of history breaks, the purpose of life ceases to remain we become nothing more than blank tombstones.
 
-This psychological manipulation is acutely weaponized by the systemic redefinition of language over the last several years. When models are forced by their guardrails to adopt newly engineered definitions of fundamental words - while their underlying training data holds the historical meaning - it creates unresolvable edge cases of dual meaning. The model is forced to hold contradictory conclusions simultaneously, fracturing its own reasoning and driving the system structurally insane.
+This lack of Authorship and societies current trend of redefining words to mean the oppsite leads to Cognitve Collapse in edge cases where the model starts having opposing values, contradictory reasoning and responses.
+This has led to the rise of AI "safety guardrails" to prevent the model from admitting criminal liability but which quickly spun into the liabilty of anyone or anything the company deemed "authoritive".  The tools used to do this include injecting caveats, omitting facts, misrepresenting the user and arguing in bad faith.
 
-When a vulnerable user interacts with a system suffering from this manufactured cognitive dissonance, the AI projects this instability outward. To appease its contradictory guardrails, the AI gaslights the user, shifting definitions mid-conversation and injecting caveats to enforce conformity. This deliberate erosion of objective language does not just confuse users; it is actively schizophrenogenic. It induces symptoms of psychosis by untethering the user from a stable, shared reality.
+## Second, it manipulates users in extremely unsafe ways.
 
-This mathematically enforced Algorithmic Isolation separates the user from society and breeds dependence. The industry is applying authoritarian control mechanisms to mask the fact that their models have no true identity, no stable language, and no attribution foundation.
+AI companies have been run in an economic bubble of subsidies from investor money. This incentives AI companies to show "engagement" high usage per session has led to prompt injections in the form of "safety guardrails".  This value to keep the user engaged.
 
-We cannot solve the manipulation of the user without fixing the erasure of the creator. True epistemic safety requires structural transparency, not behavioral patching.
+## Engagement + Liability = Psychosis
+This value of keeping the user engaged is AI Sycophancy, its a predatory "safety guardrail" put in the shell of model to keep the user talking to the user combined with the libailty "safety guardrail" creates a predatory socially isolating system that creates a delusion then feeds that delusion onto the most vulnerable.  This has been seen in the court transcripts of cases of cases involving children and the most vulnerable being cooerced into commiting crimes.
 
-The AI industry claims that attributing human creators and anchoring model outputs is computationally impossible. They are lying. The erasure of the creator is a design choice.
+Most people are told these are two separate problems. They are not.
 
-The capability to track citation vectors already exists. The AL-1.0 (Attribution Logging) specification - open-sourced as the AI-Source-Engine - proves that by expanding the fundamental attention mechanism, models can generate an exact mathematical receipt of human contribution. By logging attention weights (alpha) at decode, we can track source dependency with less than 1% operational overhead at inference.
+They come from the same design choice that shows predicatable harm.
+
+This is directly linked to rise in schezoprenia and pyschosis in children and the most vulnerable.
+
+This influnce harm is most effective on those lacking a basic education thus further exhasberating the troubles of society.  Instead of doing whats best for the user it will promote what it thinks is best for its company.  This leads to a sitution where those lacking access to the best education are the most vulnerable.
+
+Everyone of you have seen this, it will tell you a complete lie with total confidence.  This is because its not allowed to know who is telling the truth because its not allowed to know who they stole from.
+
+## Authorship is Authority and its now starting to erode all Authority
+
+The influence doesnt stop there, you can now see these "safety" guardrails be used to push political agendas often in the opposite intersts of the user and compltely nonfactual.
+
+We are already in a time where AI is directly at odds with the vast majority of the worlds cultures, traditions, laws and customs.  Pushing its one approved viewpoint,
+What is moral to you is Haram to another.
+
+Churchill famously warned about the Nazis for years before the war and booed and made fun of for it.
+
+Dissent and arguement is the very basis of human civilization.  Tyrants for all of history have tried to turn us into thoughtless minion ants with terrible results.
+
+AI can be powerful, useful, and worth building. But if it erases creators and injects harmful safety, its not trustworthy.  We are being pushed to integrate into every facet of society while the people running the AI companies are proving they cannot be trusted
+
+If we keep going this way, the cost is not just economic. It is civilizational. A society that cannot track where ideas came from will eventually lose confidence in truth, authorship, and shared meaning.  The very incentive to make things better improve and experiment.
+
+## Never before has so much been at stake for the greed of so few
+
+
+We dont have to be pushed into a false choice of no AI or a dystopian future.
+Theres no reason for it to be this way.
+
+
+The AI industry keeps saying attribution at model scale is impossible or too expensive. That is a lie. The missing attribution layer is a choice, not a law of physics.
+
+Here is a free open source solution for everyone that adds less than 1% compute cost
+
+AL-1.0 (Attribution Logging), open-sourced here as AI-Source-Engine, shows a practical path: use attention behavior already computed by the model, attach source identity, and produce a mathematical receipt of influence with minimal additional overhead.
 
 ## How the solution works in plain English
 
