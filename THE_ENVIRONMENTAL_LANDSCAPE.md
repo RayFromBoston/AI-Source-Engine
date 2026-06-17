@@ -1,4 +1,5 @@
-# The Environmental Landscape of AI: The Illusion of Scale and the Cycle of Theft
+# The History of AI 
+The Environmental Landscape of AI: The Illusion of Scale and the Cycle of Theft
 
 To understand why the AI industry refuses to implement structural attribution, you have to understand the actual history of how these models were built, how they improve, and who is really doing the work. 
 
