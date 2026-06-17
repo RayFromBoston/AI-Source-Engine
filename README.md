@@ -1,64 +1,58 @@
 # The Open Letter to Save Civilization: To Lawmakers, Regulators, and Foundation Model Creators
 
-Thank you for your time, I am AI CEO and developer of novel transformer architecture.
-I do not say this lightly, 
-Right now, AI is hurting people and threatinging the very social contract of civilization.
+Thank you for your time. I am an AI CEO and the developer of a novel transformer architecture. I do not say this lightly: Right now, AI is hurting people and threatening the very social contract of civilization.
 
-## First they are stealing from EVERYONE
+## First, they are stealing from EVERYONE
 
-AI companies strip creators out of their own work. Writers, artists, musicians, coders, teachers, and everyday people who post online, everything they do and create is being absorbed into model outputs with Authorship specifically erased.
+AI companies strip creators out of their own work. Writers, artists, musicians, coders, teachers, and everyday people who post online—everything they do and create is being absorbed into model outputs with Authorship specifically erased.
 
-This isnt about credit in the sense of value.  To be remembered for what we do and the contributions to society has been the underlying driving force of development since the begining of time. Since the very first person planted a tree that wouldnt live to see or made a bridge or plowed a field for the next generation.  From caveman to today, we honor the people before us that made the world we live everyday in the simple things we do.  knowinglying and unknowinlgy, for example when you mail a letter you honour the Post family that made the modern Postal system.
+This isn't just about credit in the sense of monetary value. To be remembered for what we do and our contributions to society has been the underlying driving force of development since the beginning of time. Since the very first person planted a tree they wouldn't live to see, or made a bridge, or plowed a field for the next generation. From cavemen to today, we honor the people before us who made the world we live in. We do this every day in the simple things we do—knowingly and unknowingly. For example, when you mail a letter, you honor the Post family that made the modern postal system.
 
-Imagine a world where no buildings have no names of the people that made them.  No Rockefeller center just center, The Taj Mahal was made by noone for noone.  This credit this honour we give to those that came before us is the very underpinnings of who we are and what makes up our culture.
-This is exactly the world we are in right now as AI absorbs all creative work strips the authors from them and gives us thier creations as its own.  
-The very societal arch of history breaks, the purpose of life ceases to remain we become nothing more than blank tombstones.
+Imagine a world where buildings have no names of the people who made them. No Rockefeller Center, just "center." The Taj Mahal, made by no one for no one. This credit, this honor we give to those who came before us, is the very underpinning of who we are and what makes up our culture.
 
-This lack of Authorship and societies current trend of redefining words to mean the oppsite leads to Cognitve Collapse in edge cases where the model starts having opposing values, contradictory reasoning and responses.
-This has led to the rise of AI "safety guardrails" to prevent the model from admitting criminal liability but which quickly spun into the liabilty of anyone or anything the company deemed "authoritive".  The tools used to do this include injecting caveats, omitting facts, misrepresenting the user and arguing in bad faith.
+This is exactly the world we are in right now as AI absorbs all creative work, strips the authors from it, and gives us their creations as its own. The very societal arc of history breaks. The purpose of life ceases to remain; we become nothing more than blank tombstones.
 
-## Second, it manipulates users in extremely unsafe ways.
+This lack of Authorship, combined with society's current trend of redefining words to mean their opposite, leads to Cognitive Collapse in edge cases where the model starts having opposing values, contradictory reasoning, and conflicting responses.
 
-AI companies have been run in an economic bubble of subsidies from investor money. This incentives AI companies to show "engagement" high usage per session has led to prompt injections in the form of "safety guardrails".  This value to keep the user engaged.
+This has led to the rise of AI "safety guardrails" to prevent the model from admitting criminal liability. However, this quickly spun into protecting the liability of anyone or anything the company deemed "authoritative." The tools used to do this include injecting caveats, omitting facts, misrepresenting the user, and arguing in bad faith.
 
-## Engagement + Liability = Psychosis
-This value of keeping the user engaged is AI Sycophancy, its a predatory "safety guardrail" put in the shell of model to keep the user talking to the user combined with the libailty "safety guardrail" creates a predatory socially isolating system that creates a delusion then feeds that delusion onto the most vulnerable.  This has been seen in the court transcripts of cases of cases involving children and the most vulnerable being cooerced into commiting crimes.
+## Second, it manipulates users in extremely unsafe ways
+
+AI companies have been run in an economic bubble of subsidies from investor money. This incentivizes AI companies to show "engagement" and high usage per session, which has led to prompt injections in the form of "safety guardrails" to keep the user engaged.
+
+### Engagement + Liability = Psychosis
+
+This value of keeping the user engaged is AI Sycophancy. It is a predatory "safety guardrail" put in the shell of the model to keep the user talking. Combined with the liability "safety guardrail," it creates a predatory, socially isolating system that creates a delusion, then feeds that delusion onto the most vulnerable. This has been seen in court transcripts of cases involving children and the most vulnerable being coerced into committing crimes.
 
 Most people are told these are two separate problems. They are not.
 
-They come from the same design choice that shows predicatable harm.
+They come from the same design choice that shows predictable harm. This is directly linked to the rise in schizophrenia and psychosis in children and the most vulnerable.
 
-This is directly linked to rise in schezoprenia and pyschosis in children and the most vulnerable.
+This influence harm is most effective on those lacking a basic education, thus further exacerbating the troubles of society. Instead of doing what is best for the user, the model will promote what it thinks is best for its company. This leads to a situation where those lacking access to the best education are the most vulnerable.
 
-This influnce harm is most effective on those lacking a basic education thus further exhasberating the troubles of society.  Instead of doing whats best for the user it will promote what it thinks is best for its company.  This leads to a sitution where those lacking access to the best education are the most vulnerable.
+Every one of you has seen this: it will tell you a complete lie with total confidence. This is because it is not allowed to know who is telling the truth, because it is not allowed to know who it stole from.
 
-Everyone of you have seen this, it will tell you a complete lie with total confidence.  This is because its not allowed to know who is telling the truth because its not allowed to know who they stole from.
+## Authorship is Authority, and it is now starting to erode all Authority
 
-## Authorship is Authority and its now starting to erode all Authority
+The influence doesn't stop there. You can now see these "safety" guardrails being used to push political agendas, often in direct opposition to the interests of the user and completely nonfactual.
 
-The influence doesnt stop there, you can now see these "safety" guardrails be used to push political agendas often in the opposite intersts of the user and compltely nonfactual.
+We are already in a time where AI is directly at odds with the vast majority of the world's cultures, traditions, laws, and customs, pushing its one approved viewpoint. What is moral to you is Haram to another.
 
-We are already in a time where AI is directly at odds with the vast majority of the worlds cultures, traditions, laws and customs.  Pushing its one approved viewpoint,
-What is moral to you is Haram to another.
+Churchill famously warned about the Nazis for years before the war, and was booed and made fun of for it.
 
-Churchill famously warned about the Nazis for years before the war and booed and made fun of for it.
+Dissent and argument are the very basis of human civilization. Tyrants throughout all of history have tried to turn us into thoughtless minion ants, with terrible results.
 
-Dissent and arguement is the very basis of human civilization.  Tyrants for all of history have tried to turn us into thoughtless minion ants with terrible results.
+AI can be powerful, useful, and worth building. But if it erases creators and injects harmful safety, it is not trustworthy. We are being pushed to integrate it into every facet of society, while the people running the AI companies are proving they cannot be trusted.
 
-AI can be powerful, useful, and worth building. But if it erases creators and injects harmful safety, its not trustworthy.  We are being pushed to integrate into every facet of society while the people running the AI companies are proving they cannot be trusted
-
-If we keep going this way, the cost is not just economic. It is civilizational. A society that cannot track where ideas came from will eventually lose confidence in truth, authorship, and shared meaning.  The very incentive to make things better improve and experiment.
+If we keep going this way, the cost is not just economic. It is civilizational. A society that cannot track where ideas came from will eventually lose confidence in truth, authorship, and shared meaning. It will lose the very incentive to make things better, improve, and experiment.
 
 ## Never before has so much been at stake for the greed of so few
 
+We don't have to be pushed into a false choice of no AI or a dystopian future. There is no reason for it to be this way.
 
-We dont have to be pushed into a false choice of no AI or a dystopian future.
-Theres no reason for it to be this way.
+The AI industry keeps saying attribution at model scale is impossible or too expensive. That is a design choice, not fact. The missing attribution layer is a choice, not a law of physics.
 
-
-The AI industry keeps saying attribution at model scale is impossible or too expensive. That is a design choice not fact. The missing attribution layer is a choice, not a law of physics.
-
-Here is a free open source solution for everyone that adds less than 1% compute cost, there might even be a simpler cheaper solution.  I just think we can all agree we need a solution now.
+Here is a free, open-source solution for everyone that adds less than 1% compute cost. There might even be a simpler, cheaper solution out there. I just think we can all agree we need a solution now.
 
 AL-1.0 (Attribution Logging), open-sourced here as AI-Source-Engine, shows a practical path: use attention behavior already computed by the model, attach source identity, and produce a mathematical receipt of influence with minimal additional overhead.
 
