@@ -1,8 +1,16 @@
 # The Open Letter to Save Civilization: To Lawmakers, Regulators, and Foundation Model Creators
 
-Right now, AI is hurting people in two ways at once.
+Thank you for your time, I am AI CEO and developer of novel transformer architecture.
+I do not say this lightly, 
+Right now, AI is hurting people and threatinging the very social contract of civilization.
 
 First, it strips creators out of their own work. Writers, artists, musicians, coders, teachers, and everyday people who post online are being absorbed into model outputs with no clear receipt of who contributed what.
+
+This isnt about credit in the sense of value.  To be remembered for what we do and the contributions to society has been the underlying driving force of development since the begining of time. Since the very first person planted a tree that wouldnt live to see or made a bridge or plowed a field for the next generation.  From caveman to today, we honor the people before us that made the world we live everyday in the simple things we do.  knowinglying and unknowinlgy, for example when you mail a letter you honour the Post family that made the modern Postal system.
+
+Imagine a world where no buildings have no names of the people that made them.  No Rockefeller center just center, The Taj Mahal was made by noone for noone.  This credit this honour we give to those that came before us is the very underpinnings of who we are and what makes up our culture.
+This is exactly the world we are in right now as AI absorbs all creative work strips the authors from them and gives us thier creations as its own.  
+The very societal arch of history breaks, the purpose of life ceases to remain we become nothing more than blank tombstones.
 
 Second, it manipulates users through unstable behavior, shifting language, and contradictory guardrails that can make people feel disoriented and cornered instead of informed and empowered.
 
@@ -12,7 +20,17 @@ They come from the same design failure: a black-box system that cannot clearly s
 
 When a system cannot show its work, companies try to control behavior from the outside with patch after patch: safety layers, policy layers, engagement layers, and forced output constraints. The result is confusion, inconsistency, and social damage at scale.
 
-This is not anti-AI. This is anti-unaccountable AI.
+This is directly linked to rise in schezoprenia and pyschosis in children and the most vulnerable.
+
+
+The influence doesnt stop there, you can now see these "safety" guardrails be used to push political agendas often in the opposite intersts of the user.
+
+
+I am not naive every tech company has taken something but this cost is to high.
+
+
+We dont have to be pushed into a false choice of no AI or a dystopian future.
+Theres no reason for it to be this way.
 
 AI can be powerful, useful, and worth building. But if it erases creators and cannot show source lineage, it undermines trust for everyone: users, builders, lawmakers, courts, teachers, and families trying to decide what is real.
 
@@ -20,7 +38,7 @@ If we keep going this way, the cost is not just economic. It is civilizational. 
 
 The good news is this is fixable.
 
-The AI industry keeps saying attribution at model scale is impossible or too expensive. That is false. The missing attribution layer is a choice, not a law of physics.
+The AI industry keeps saying attribution at model scale is impossible or too expensive. That is a lie. The missing attribution layer is a choice, not a law of physics.
 
 AL-1.0 (Attribution Logging), open-sourced here as AI-Source-Engine, shows a practical path: use attention behavior already computed by the model, attach source identity, and produce a mathematical receipt of influence with minimal additional overhead.
 
