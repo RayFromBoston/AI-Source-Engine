@@ -3,7 +3,7 @@
 If this is your first time here, read this like instructions from one person to another.
 
 You do not need to know the full codebase first.
-You only need to know what this system is for and what to run.
+You only need to know what this system is for and what to run. 
 
 ## What this system does in plain language
 
