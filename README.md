@@ -146,15 +146,25 @@ Your GitHub profile acts as identity verification for technical signatories.
 
 ## Repository Guide
 examples/ — Sample implementations and use cases demonstrating AL-1.0 in action.
+
 src/al10/ — The core source code for the AL-1.0 implementation.
+
 tests/ — Unit tests and validation scripts to ensure the attribution logging functions correctly.
+
 AGI Safety Bible.pdf — The foundational text detailing the psychological mechanics of Cognitive Collapse, AI Psychosis, and the dangers of behavioral patching.
+
 ENGINEERING_GUIDE.md — The technical blueprint. Explains how AL-1.0 modifies the transformer attention mechanism to generate mathematical receipts of influence.
+
 LICENSE — Free for All. The open-source licensing agreement for the project.
+
 README.md — The Open Letter. The core philosophical argument against AI Feudalism and the demand for structural attribution.
+
 SIGNATORIES.md — The public list of creators, engineers, and citizens who have signed the Open Letter demanding mandatory attribution.
+
 START_GUIDE.md — Quick start instructions for developers looking to implement or test the AI Source Engine architecture.
+
 THE_HISTORY_OF_AI.md — How AI companies actually work. A documented timeline of the bait-and-switch, silent RLHF updates, and the pipeline of user theft.
+
 We All Die in the Dark.pdf — Starting Thesis.
 
 
