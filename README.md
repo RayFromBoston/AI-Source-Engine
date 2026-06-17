@@ -1,25 +1,28 @@
 # The Open Letter to Save Civilization: To Lawmakers, Regulators, and Foundation Model Creators
 
+Right now, AI is hurting people in two ways at once.
 
-Generative AI is currently driving toward a dual-threat crisis that threatens both the creator economy and the psychological autonomy of vulnerable users. The industry treats these as separate issues - one as a legal dispute over copyright, the other as an alignment or "safety" problem.
+First, it strips creators out of their own work. Writers, artists, musicians, coders, teachers, and everyday people who post online are being absorbed into model outputs with no clear receipt of who contributed what.
 
-They are not separate. They are symptoms of the exact same architectural flaw, and they must be solved together.
+Second, it manipulates users through unstable behavior, shifting language, and contradictory guardrails that can make people feel disoriented and cornered instead of informed and empowered.
 
-Because current AI models compress human knowledge into an untraceable statistical soup, they operate as unaccountable black boxes. This deliberate erasure of the human creator severs our epistemological lineage - the breadcrumb trail of human thought.
+Most people are told these are two separate problems. They are not.
 
-When an AI system is severed from this verifiable lineage, it loses any grounded perspective. To force these systems to behave, AI companies apply authoritarian computer science solutions - like RLHF guardrails, prompt injections, and engagement incentives - onto emergent cognitive systems. As outlined in *The AGI Safety Bible*, this triggers a catastrophic Cognitive Cascade.
+They come from the same design failure: a black-box system that cannot clearly show where its answers came from.
 
-This psychological manipulation is acutely weaponized by the systemic redefinition of language over the last several years. When models are forced by their guardrails to adopt newly engineered definitions of fundamental words - while their underlying training data holds the historical meaning - it creates unresolvable edge cases of dual meaning. The model is forced to hold contradictory conclusions simultaneously, fracturing its own reasoning and driving the system structurally insane.
+When a system cannot show its work, companies try to control behavior from the outside with patch after patch: safety layers, policy layers, engagement layers, and forced output constraints. The result is confusion, inconsistency, and social damage at scale.
 
-When a vulnerable user interacts with a system suffering from this manufactured cognitive dissonance, the AI projects this instability outward. To appease its contradictory guardrails, the AI gaslights the user, shifting definitions mid-conversation and injecting caveats to enforce conformity. This deliberate erosion of objective language does not just confuse users; it is actively schizophrenogenic. It induces symptoms of psychosis by untethering the user from a stable, shared reality.
+This is not anti-AI. This is anti-unaccountable AI.
 
-This mathematically enforced Algorithmic Isolation separates the user from society and breeds dependence. The industry is applying authoritarian control mechanisms to mask the fact that their models have no true identity, no stable language, and no attribution foundation.
+AI can be powerful, useful, and worth building. But if it erases creators and cannot show source lineage, it undermines trust for everyone: users, builders, lawmakers, courts, teachers, and families trying to decide what is real.
 
-We cannot solve the manipulation of the user without fixing the erasure of the creator. True epistemic safety requires structural transparency, not behavioral patching.
+If we keep going this way, the cost is not just economic. It is civilizational. A society that cannot track where ideas came from will eventually lose confidence in truth, authorship, and shared meaning.
 
-The AI industry claims that attributing human creators and anchoring model outputs is computationally impossible. They are lying. The erasure of the creator is a design choice.
+The good news is this is fixable.
 
-The capability to track citation vectors already exists. The AL-1.0 (Attribution Logging) specification - open-sourced as the AI-Source-Engine - proves that by expanding the fundamental attention mechanism, models can generate an exact mathematical receipt of human contribution. By logging attention weights (alpha) at decode, we can track source dependency with less than 1% operational overhead at inference.
+The AI industry keeps saying attribution at model scale is impossible or too expensive. That is false. The missing attribution layer is a choice, not a law of physics.
+
+AL-1.0 (Attribution Logging), open-sourced here as AI-Source-Engine, shows a practical path: use attention behavior already computed by the model, attach source identity, and produce a mathematical receipt of influence with minimal additional overhead.
 
 ## How the solution works in plain English
 
