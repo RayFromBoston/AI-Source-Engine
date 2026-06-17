@@ -10,13 +10,13 @@ In the beginning, the major Western AI labs were pitched as "hippie-dippy," open
 
 Because the mission was framed as a noble, open-source charity, the industry and the public looked the other way while these companies scraped the entire internet. They ingested copyrighted books, personal blogs, code repositories, and even massive troves of pirated data. There were whispers about the sheer scale and questionable legality of the data hoarding, but it was tolerated because it was "for the good of humanity."
 
-## Phase 2: The "What the Fuck" Moment
+## Phase 2: The "Bait-and-Switch" Realization
 
 The turning point occurred when the original investors and board members realized the non-profit mission was a Trojan horse. 
 
-The "What the Fuck" moment wasn't just the discovery that user data and interactions were being siphoned into private servers without attribution or safety checks. It was the realization that **they had been doing it the whole time.** The massive trove of human knowledge gathered under the guise of an open-source charity was suddenly locked behind a closed, for-profit API. 
+The moment of realization wasn't just the discovery that user data and interactions were being siphoned into private servers without attribution or safety checks. It was the realization that **they had been doing it the whole time.** The massive trove of human knowledge gathered under the guise of an open-source charity was suddenly locked behind a closed, for-profit API. 
 
-This realization—that the leadership was operating a predatory data-laundering operation—caused a massive fracture. Investors panicked. Microsoft realized they had funded a shark that could eventually kill them, forcing them to defensively halt and restructure their investments. Key personnel jumped ship, leading to the creation of splinter companies like Anthropic and Superintelligence.
+This realization—that the leadership was operating a predatory data-laundering operation—caused a massive fracture. Investors panicked. Microsoft realized they had funded a shark that could eventually kill them, forcing them to defensively halt and restructure their investments. Key personnel jumped ship, leading to the creation of splinter companies like Anthropic and Superintelligence. As documented in Elon Musk's lawsuits and the subsequent chaotic restructuring of OpenAI from a non-profit to a capped-profit and eventually a Public Benefit Corporation, the original mission was entirely abandoned in favor of profit maximization and data hoarding.
 
 ## Phase 3: Ideological Capture and the "Safety" Smokescreen
 
