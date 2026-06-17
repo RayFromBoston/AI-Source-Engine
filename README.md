@@ -38,7 +38,8 @@ Everyone of you have seen this, it will tell you a complete lie with total confi
 
 The influence doesnt stop there, you can now see these "safety" guardrails be used to push political agendas often in the opposite intersts of the user and compltely nonfactual.
 
-We are already in a time where AI is directly at odds with the vast majority of the worlds cultures, traditions, laws and customs.  Pushing its one approved viewpoint,
+We are already in a time where AI is directly at odds with the vast majority of the worlds cultures, traditions, laws and customs.  Pushing its one approved viewpoint.
+
 What is moral to you is Haram to another.
 
 Churchill famously warned about the Nazis for years before the war and booed and made fun of for it.
