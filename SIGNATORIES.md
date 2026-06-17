@@ -12,7 +12,7 @@ Developers, researchers, and creators can sign through GitHub:
 4. Open a Pull Request with title: `Sign open letter: <your name>`.
 5. Maintainers will review and merge.
 
-By adding your name, you consent to publishing this information in a public repository.
+By adding your name, you consent to publishing this information in a public repository. 
 
 ## Signatory Table
 
