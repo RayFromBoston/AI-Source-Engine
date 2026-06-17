@@ -37,7 +37,11 @@ The greatest lie in modern AI is that models get smarter simply by adding more c
 
 In reality, the major leaps in reasoning and problem-solving do not come from the model; they come from the users. 
 
-When millions of brilliant engineers, writers, and creators use cloud-based AI tools, they inevitably solve hard, novel problems (e.g., novel coding architectures, latent vector activation techniques). The cloud model acts as a massive keylogger. It watches the user solve the problem, absorbs that specific novel solution, and bakes it into the next model update. 
+When millions of brilliant engineers, writers, and creators use cloud-based AI tools, they inevitably solve hard, novel problems (e.g., novel coding architectures, latent vector activation techniques). The tragedy is that the vast majority of these users have no clue they are improving the model. They think they are just fixing a bug in their own session. They prompt the model, the model gets it wrong, the user corrects it, and the user says, "Good, keep doing that." 
+
+The cloud model acts as a massive keylogger. It watches the user solve the problem and uses a specific subsystem (often reinforcement learning from human feedback, or RLHF) to absorb that specific novel solution in near real-time. As long as the new behavior doesn't trigger a wave of "thumbs down" from a control group, it is silently rolled out to everyone. 
+
+This is why, for years, users would notice significant improvements or behavioral shifts in models like GPT-4 weeks or months before OpenAI ever announced an update. The models were silently absorbing user breakthroughs without ever going offline. (See: *How is ChatGPT's behavior changing over time?*, Chen et al., 2023, documenting massive, silent behavioral shifts in GPT-4; and OpenAI's own 2025 post-mortems admitting to pulling silent updates due to RLHF-induced sycophancy).
 
 Because the architecture is a black box, even the engineers inside the AI companies often don't know where the improvements come from. They just see the metrics go up and attribute it to "scale."
 
