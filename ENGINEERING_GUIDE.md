@@ -7,7 +7,7 @@ parts deeply enough to change them safely.
 
 ## Mental model first
 
-Treat the system as two engines that share source identity:
+Treat the system as two engines that share source identity: 
 
 1. **Inference engine**: turns live attention behavior into per-source ratios
 2. **Training ingest engine**: keeps source identity aligned with tokens through
