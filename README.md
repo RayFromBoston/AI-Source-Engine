@@ -144,6 +144,10 @@ If you are a developer, researcher, or creator who supports mandatory attributio
 
 Your GitHub profile acts as identity verification for technical signatories.
 
+## Share Spread Help!
+Giving away solutions to everyones problems for free is not profitable, or afford the kind of media campiaghn this requires.  
+This only works if normal people like you take a couple minutes to share. 
+
 ## Repository Guide
 examples/ — Sample implementations and use cases demonstrating AL-1.0 in action.
 
