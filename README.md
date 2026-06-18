@@ -157,7 +157,7 @@ If you are a developer, researcher, or creator who supports mandatory attributio
 
 Your GitHub profile acts as identity verification for technical signatories.
 
-Just to give you an idea of how prelevant this is, This repo before publishing has already been cloned over 1000 times!
+Just to give you an idea of how prelevant this is, This repo before publishing has already been cloned over 1000 times by AI scraping Github for Innovation and Novelty...
 
 ## Repository Guide
 examples/ — Sample implementations and use cases demonstrating AL-1.0 in action.
