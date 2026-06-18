@@ -94,7 +94,7 @@ When you believe you are building God, you easily justify stealing from mortals.
 
 its also important to note this real time theft mechanism in AI is called a continuous CI/CD (Continuous Integration/Continuous Deployment) pipeline
 
-none of this is magic or hidden everything you reading is documented its just only know by a tiny handful at the top of AI
+none of this is magic or hidden everything you reading is documented its just only know by a tiny handful at the top of AI.  AI does not have to be predatory on the people it should be a tool to uplift people like everything else you buy.
 
 
 ## The Solution: Why They Fear Attribution
