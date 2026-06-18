@@ -86,6 +86,11 @@ It also exposes the underlying pathology of the "non-profit" AI startups. OpenAI
 
 When you believe you are building God, you easily justify stealing from mortals. They feel completely entitled to bypass laws, ethics, and the chain of custody because they believe their utopian ends justify their criminal means. They aren't bound by the traditional rules of software because they don't view themselves as software companies—they view themselves as authoritarian overlords saving us from ourselves.
 
+its also important to note this real time theft mechanism in AI is called a continuous CI/CD (Continuous Integration/Continuous Deployment) pipeline
+
+none of this is magic or hidden everything you reading is documented its just only know by a tiny handful at the top of AI
+
+
 ## The Solution: Why They Fear Attribution
 
 This entire ecosystem of grift relies on the black box. If you cannot prove where an idea came from, the AI company can claim they invented it.
