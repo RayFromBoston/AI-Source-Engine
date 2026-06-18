@@ -45,6 +45,12 @@ This is why, for years, users would notice significant improvements or behaviora
 
 Because the architecture is a black box, even the engineers inside the AI companies often don't know where the improvements come from. They just see the metrics go up and attribute it to "scale."
 
+### Anthropic Started from Theft
+
+This pattern was not limited to OpenAI. Anthropic was founded by ex-OpenAI executives who carried the same playbook with them. From day one, the company engaged in the same non-consensual data absorption. Most notably, Anthropic copied the interactive coding UI that had been pioneered and popularized by Cursor — at the time one of its largest and most important customers — and turned that stolen interface into what became the Artifacts feature and "Claude code" experience.
+
+When Claude 3.5 Sonnet and Artifacts launched in mid-2024, the mass migration of top developers was not the result of Anthropic suddenly doing original work. It was the direct consequence of them having successfully replicated the best user-facing tool from the very people who were supplying them with the highest-quality novel problem-solving data. Anthropic did not build from a position of clean innovation; it started by stealing from its own users and has operated that way ever since.
+
 ## Phase 5: The Great Migration (The Grift Changes Hands)
 
 The most damning proof of this user-driven theft pipeline is what happened when Anthropic released Claude 3.5 Sonnet and the "Artifacts" coding window in mid-2024. 
