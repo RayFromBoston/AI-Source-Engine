@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AL-1.0 • Stop AI from Stealing from You</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+    
+    :root {
+      --font-sans: 'Inter', system_ui, sans-serif;
+      --font-display: 'Space Grotesk', 'Inter', sans-serif;
+    }
+    
+    body {
+      font-family: var(--font-sans);
+    }
+    
+    .display-font {
+      font-family: var(--font-display);
+      font-weight: 600;
+      letter-spacing: -0.025em;
+    }
+
+    .hero-gradient {
+      background: linear-gradient(135deg, #0a0a0a 0%, #111111 100%);
+    }
+
+    .section {
+      scroll-margin-top: 80px;
+    }
+
+    .manifesto-text {
+      font-size: 1.05rem;
+      line-height: 1.65;
+    }
+
+    .stat {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .nav-scrolled {
+      box-shadow: 0 1px 0 0 rgba(255,255,255,0.06);
+    }
+
+    .share-btn {
+      transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .share-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+
+    .identity-card {
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+                  box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .identity-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    }
+
+    .tl-dr {
+      background: #111;
+      border: 1px solid #222;
+    }
+
+    .civilisation-banner {
+      background: linear-gradient(to right, #1a1a1a, #111);
+      border-bottom: 1px solid #222;
+    }
+  </style>
+</head>
+<body class="bg-zinc-950 text-zinc-200">
+  <!-- Top nav -->
+  <nav class="sticky top-0 z-50 bg-zinc-950/95 backdrop-blur border-b border-zinc-800">
+    <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-x-3">
+        <div class="flex items-center gap-x-2">
+          <div class="w-8 h-8 rounded bg-red-600 flex items-center justify-center">
+            <span class="text-white font-bold text-lg tracking-tighter">A</span>
+          </div>
+          <div>
+            <span class="font-semibold tracking-tight">AL-1.0</span>
+            <span class="text-xs text-zinc-500 ml-1.5">AI-Source-Engine</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-x-2 text-sm">
+        <a href="https://github.com/rayfromboston/ai-source-engine" target="_blank" 
+           class="px-4 py-1.5 rounded-full hover:bg-zinc-900 border border-zinc-800 flex items-center gap-x-2 text-sm">
+          <i class="fab fa-github"></i>
+          <span>View on GitHub</span>
+        </a>
+        <a href="#sign" 
+           class="px-5 py-1.5 bg-white text-zinc-950 rounded-full font-medium text-sm hover:bg-zinc-200 transition-colors">
+          Sign the letter
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero / Banner -->
+  <div class="civilisation-banner">
+    <div class="max-w-5xl mx-auto px-6 pt-16 pb-12">
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center gap-x-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs tracking-[0.5px] mb-6">
+          <div class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></div>
+          <span>OPEN LETTER TO LAWMAKERS, REGULATORS &amp; MODEL CREATORS</span>
+        </div>
+
+        <h1 class="text-6xl md:text-7xl display-font font-semibold tracking-tighter leading-none mb-4">
+          AI is stealing from<br>everyone.<br>
+          <span class="text-zinc-400">We built the receipts.</span>
+        </h1>
+        
+        <p class="max-w-lg text-xl text-zinc-400 mt-4 mb-8">
+          They erased the authors. They call it "scale." 
+          We made attribution logging that costs &lt;1% and actually works.
+        </p>
+
+        <div class="flex flex-wrap gap-3">
+          <a href="#sign" 
+             class="inline-flex items-center justify-center px-7 py-3.5 bg-white hover:bg-zinc-100 active:bg-zinc-200 transition-all text-zinc-950 font-semibold rounded-2xl text-base">
+            Sign the Open Letter
+          </a>
+          <a href="README.md" 
+             class="inline-flex items-center justify-center px-7 py-3.5 border border-zinc-700 hover:bg-zinc-900 rounded-2xl text-base">
+            Read the full letter
+          </a>
+        </div>
+        
+        <div class="mt-6 text-xs text-zinc-500">
+          Free. Open source. Ready to mandate.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1-2-3 Summary -->
+  <div class="max-w-5xl mx-auto px-6 pt-12">
+    <div class="tl-dr rounded-3xl p-8 md:p-10 border border-zinc-800">
+      <div class="uppercase text-xs tracking-[1.5px] text-red-500 font-medium mb-4">IN 30 SECONDS</div>
+      
+      <div class="space-y-6 text-[15px]">
+        <div class="flex gap-4">
+          <div class="font-mono text-red-500 font-bold w-6 shrink-0">1</div>
+          <div>
+            <span class="font-semibold text-zinc-100">They are stealing from everyone.</span><br>
+            <span class="text-zinc-400">AI companies absorb creators' work, strip the authors, and call it their own. The same systems are built to manipulate users into psychosis for engagement.</span>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <div class="font-mono text-red-500 font-bold w-6 shrink-0">2</div>
+          <div>
+            <span class="font-semibold text-zinc-100">We built the fix.</span><br>
+            <span class="text-zinc-400"><strong>AL-1.0 (AI-Source-Engine)</strong> is free, open-source, and adds a mathematical receipt of influence using attention the model already computes — for less than 1% extra cost.</span>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <div class="font-mono text-red-500 font-bold w-6 shrink-0">3</div>
+          <div>
+            <span class="font-semibold text-zinc-100">Regulators must mandate it.</span><br>
+            <span class="text-zinc-400">Authorship is the foundation of civilization. Without it, there is no incentive to create. Demand the receipts.</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-6 pt-6 border-t border-zinc-800 text-sm flex items-center gap-x-2 text-red-400">
+        <span class="font-medium">Sign below or scroll to the bottom to take action →</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- The Theft -->
+  <div class="max-w-5xl mx-auto px-6 pt-16">
+    <div class="max-w-2xl">
+      <h2 class="text-4xl display-font tracking-tighter font-semibold">They are stealing from EVERYONE</h2>
+      <div class="manifesto-text mt-6 text-zinc-400 space-y-5">
+        <p>AI companies strip creators out of their own work. Writers, artists, musicians, coders — everything is absorbed with authorship erased.</p>
+        <p>This isn't just credit. To be remembered for what we do has driven human progress since the beginning of civilization. AI Feudalism breaks that arc.</p>
+        <p>Combined with "safety guardrails" designed for engagement and liability protection, the same systems create algorithmic isolation and feed delusions — especially to the most vulnerable.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- The Fix -->
+  <div class="max-w-5xl mx-auto px-6 pt-14" id="solution">
+    <div class="grid md:grid-cols-12 gap-x-8 gap-y-8">
+      <div class="md:col-span-5">
+        <div class="sticky top-20">
+          <div class="uppercase tracking-[1px] text-xs font-medium text-emerald-500">THE FIX</div>
+          <h3 class="text-4xl display-font tracking-tighter font-semibold mt-2">AL-1.0</h3>
+          <p class="mt-3 text-lg text-zinc-400">A practical, open-source attribution layer that reuses the attention the model already computes.</p>
+          
+          <div class="mt-8 text-sm">
+            <div class="flex items-center gap-x-2 text-emerald-400">
+              <i class="fas fa-check"></i>
+              <span class="font-medium">&lt;1% extra compute</span>
+            </div>
+            <div class="flex items-center gap-x-2 mt-1 text-emerald-400">
+              <i class="fas fa-check"></i>
+              <span class="font-medium">Works on existing transformer architectures</span>
+            </div>
+            <div class="flex items-center gap-x-2 mt-1 text-emerald-400">
+              <i class="fas fa-check"></i>
+              <span class="font-medium">Produces auditable mathematical receipts</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="md:col-span-7">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 text-sm">
+          <div class="font-medium mb-4 text-white">How it works (plain English)</div>
+          
+          <ol class="space-y-4 text-zinc-400">
+            <li class="flex gap-3"><span class="font-mono text-xs pt-1 text-zinc-500">01</span> <span>During training, every token gets a <code class="bg-zinc-800 px-1 rounded">source_idx</code> tag.</span></li>
+            <li class="flex gap-3"><span class="font-mono text-xs pt-1 text-zinc-500">02</span> <span>At generation time we read the attention weights the model already calculates.</span></li>
+            <li class="flex gap-3"><span class="font-mono text-xs pt-1 text-zinc-500">03</span> <span>We bucket those weights by source and normalize them into a receipt.</span></li>
+            <li class="flex gap-3"><span class="font-mono text-xs pt-1 text-zinc-500">04</span> <span>The output now shows exactly which sources influenced the answer and by how much.</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sign the letter - prominent -->
+  <div id="sign" class="max-w-5xl mx-auto px-6 pt-16">
+    <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-9 md:p-12">
+      <div class="max-w-2xl">
+        <h2 class="text-4xl display-font tracking-tighter font-semibold">Sign the Open Letter</h2>
+        <p class="mt-3 text-zinc-400">Don't sign it for me. Sign it for your great-grandpa whose name was stripped from his work. Sign it for your unborn grandkid.</p>
+      </div>
+
+      <div class="mt-8 grid md:grid-cols-2 gap-6">
+        <!-- Email signup -->
+        <div>
+          <div class="text-xs uppercase tracking-widest text-zinc-500 mb-3">SIGN VIA EMAIL</div>
+          
+          <form id="email-signup" onsubmit="handleEmailSignup(event)" class="space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <input type="text" id="name" placeholder="Your name" required 
+                     class="bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-zinc-600 placeholder:text-zinc-600">
+              <input type="text" id="title" placeholder="Title / Role (optional)" 
+                     class="bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-zinc-600 placeholder:text-zinc-600">
+            </div>
+            <input type="email" id="email" placeholder="Email address" required 
+                   class="w-full bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-zinc-600 placeholder:text-zinc-600">
+            
+            <button type="submit" 
+                    class="w-full py-3 rounded-2xl bg-white hover:bg-zinc-200 active:bg-white text-zinc-950 font-semibold text-sm transition-colors">
+              Click to sign via email (opens your mail app)
+            </button>
+          </form>
+          <p class="text-[10px] text-zinc-500 mt-2">We'll add your name publicly and notify you when regulators are contacted.</p>
+        </div>
+
+        <!-- PR signing -->
+        <div class="border border-zinc-800 rounded-3xl p-6 bg-zinc-950/50">
+          <div class="text-xs uppercase tracking-widest text-zinc-500 mb-3">FOR DEVELOPERS &amp; ENGINEERS</div>
+          
+          <div class="font-medium">Sign by Pull Request</div>
+          <p class="text-sm text-zinc-400 mt-2">Fork the repo, edit SIGNATORIES.md, and open a PR titled <span class="font-mono text-xs">"Sign open letter: Your Name"</span>.</p>
+          
+          <a href="https://github.com/rayfromboston/ai-source-engine/edit/main/SIGNATORIES.md" target="_blank"
+             class="mt-4 inline-flex items-center gap-x-2 text-sm font-medium px-4 py-2 rounded-2xl border border-zinc-700 hover:bg-zinc-900">
+            <i class="fab fa-github"></i>
+            <span>Edit SIGNATORIES.md on GitHub</span>
+          </a>
+          
+          <div class="text-[10px] mt-3 text-emerald-400">Your GitHub profile serves as verification.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Identity framing + Share -->
+  <div class="max-w-5xl mx-auto px-6 pt-14">
+    <div class="mb-4 text-xs uppercase tracking-widest text-zinc-500">WHO THIS IS FOR</div>
+    
+    <div class="grid md:grid-cols-3 gap-4">
+      <!-- Creators -->
+      <div class="identity-card border border-zinc-800 rounded-3xl p-6 bg-zinc-900/40">
+        <div class="font-semibold flex items-center gap-x-2">
+          <i class="fas fa-pen-nib text-amber-400"></i> 
+          <span>For Creators</span>
+        </div>
+        <p class="mt-2 text-sm text-zinc-400">Writers, artists, musicians, coders. They took your work and called it theirs. Demand the receipts back.</p>
+        <button onclick="shareWithIdentity('creator')" 
+                class="mt-4 text-xs px-3 py-1.5 rounded-full border border-amber-900 text-amber-400 hover:bg-amber-950">Share as a creator</button>
+      </div>
+
+      <!-- Engineers -->
+      <div class="identity-card border border-zinc-800 rounded-3xl p-6 bg-zinc-900/40">
+        <div class="font-semibold flex items-center gap-x-2">
+          <i class="fas fa-code text-sky-400"></i> 
+          <span>For Engineers</span>
+        </div>
+        <p class="mt-2 text-sm text-zinc-400">Attribution is not impossible. It's a design choice. Show the industry the math already exists.</p>
+        <button onclick="shareWithIdentity('engineer')" 
+                class="mt-4 text-xs px-3 py-1.5 rounded-full border border-sky-900 text-sky-400 hover:bg-sky-950">Share as an engineer</button>
+      </div>
+
+      <!-- Regulators / Citizens -->
+      <div class="identity-card border border-zinc-800 rounded-3xl p-6 bg-zinc-900/40">
+        <div class="font-semibold flex items-center gap-x-2">
+          <i class="fas fa-balance-scale text-violet-400"></i> 
+          <span>For Citizens &amp; Policymakers</span>
+        </div>
+        <p class="mt-2 text-sm text-zinc-400">Civilization is the agreement that what you build matters beyond your lifetime. Mandate the receipts.</p>
+        <button onclick="shareWithIdentity('policy')" 
+                class="mt-4 text-xs px-3 py-1.5 rounded-full border border-violet-900 text-violet-400 hover:bg-violet-950">Share this demand</button>
+      </div>
+    </div>
+
+    <!-- Share buttons -->
+    <div class="mt-8 pt-6 border-t border-zinc-800">
+      <div class="text-xs uppercase tracking-widest text-zinc-500 mb-3">ONE-CLICK SHARE</div>
+      
+      <div class="flex flex-wrap gap-2">
+        <a href="https://twitter.com/intent/tweet?text=AI%20companies%20are%20erasing%20authorship%20and%20calling%20it%20progress.%20AL-1.0%20is%20a%20free%20open-source%20fix%20that%20produces%20mathematical%20receipts%20of%20influence.%20They%20lied%20when%20they%20said%20it%20was%20impossible.%20https://github.com/rayfromboston/ai-source-engine" 
+           target="_blank"
+           class="share-btn flex items-center gap-x-2 px-4 py-2 rounded-2xl border border-zinc-800 hover:bg-zinc-900 text-sm">
+          <i class="fab fa-x-twitter"></i>
+          <span>Post on X</span>
+        </a>
+        
+        <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://github.com/rayfromboston/ai-source-engine" 
+           target="_blank"
+           class="share-btn flex items-center gap-x-2 px-4 py-2 rounded-2xl border border-zinc-800 hover:bg-zinc-900 text-sm">
+          <i class="fab fa-linkedin"></i>
+          <span>Share on LinkedIn</span>
+        </a>
+        
+        <button onclick="copyForInstagram()" 
+                class="share-btn flex items-center gap-x-2 px-4 py-2 rounded-2xl border border-zinc-800 hover:bg-zinc-900 text-sm">
+          <i class="fab fa-instagram"></i>
+          <span>Copy text for Instagram</span>
+        </button>
+        
+        <a href="https://news.ycombinator.com/submitlink?u=https://github.com/rayfromboston/ai-source-engine&t=AL-1.0%3A%20Lightweight%20attribution%20logging%20for%20transformers%20(%3C1%25%20overhead)" 
+           target="_blank"
+           class="share-btn flex items-center gap-x-2 px-4 py-2 rounded-2xl border border-zinc-800 hover:bg-zinc-900 text-sm">
+          <i class="fab fa-hacker-news"></i>
+          <span>Submit to Hacker News</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom CTA / Frictionless movement section -->
+  <div class="max-w-5xl mx-auto px-6 pt-12">
+    <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-8 md:p-10">
+      <div class="max-w-2xl">
+        <div class="text-sm uppercase tracking-widest text-red-500 mb-2">This only works if people act</div>
+        <h3 class="text-3xl display-font font-semibold tracking-tighter">Turn this into a movement, not a manifesto.</h3>
+        <p class="mt-3 text-zinc-400">The real power is frictionless action. Share it as who you are. Sign it so your name is on the record. Tell the people who write the rules.</p>
+      </div>
+
+      <div class="mt-8 grid md:grid-cols-2 gap-4 text-sm">
+        <div>
+          <div class="font-medium mb-2">Quick actions (one click each)</div>
+          <ul class="space-y-1.5 text-zinc-400">
+            <li>• <a href="#sign" class="underline">Sign with your email right now</a> (opens your mail app pre-filled)</li>
+            <li>• <a href="https://github.com/rayfromboston/ai-source-engine/edit/main/SIGNATORIES.md" target="_blank" class="underline">Submit a PR to sign as a developer</a> (shows on your public GitHub)</li>
+            <li>• Share using the buttons above with your own voice</li>
+          </ul>
+        </div>
+        <div>
+          <div class="font-medium mb-2">Tell the people who can actually force change</div>
+          <ul class="space-y-1.5 text-zinc-400">
+            <li>• Forward the letter to your regulator or representative</li>
+            <li>• Tag journalists covering AI, copyright, or the creator economy</li>
+            <li>• Post in the communities that are already pissed off about this</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mt-6 pt-6 border-t border-zinc-800 text-xs text-zinc-500">
+        Every signature and every share makes it harder for them to keep pretending attribution is "impossible."
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer / Links -->
+  <div class="max-w-5xl mx-auto px-6 pt-16 pb-12 text-xs text-zinc-500">
+    <div class="flex flex-col md:flex-row gap-y-2 md:items-center md:justify-between">
+      <div>
+        Full letter: <a href="README.md" class="underline">README.md</a> • 
+        History: <a href="THE_HISTORY_OF_AI.md" class="underline">THE_HISTORY_OF_AI.md</a>
+      </div>
+      <div>
+        Code: <a href="https://github.com/rayfromboston/ai-source-engine" class="underline">github.com/rayfromboston/ai-source-engine</a>
+      </div>
+    </div>
+    <div class="mt-6 text-[10px]">
+      This is not a tollbooth. This is sunlight. Mandate attribution logging.
+    </div>
+  </div>
+
+  <script>
+    function tailwindInit() {
+      // Tailwind script is already loaded via CDN
+      console.log('%c[AL-1.0] Landing page ready', 'color:#3f3f46');
+    }
+    
+    function handleEmailSignup(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const title = document.getElementById('title').value.trim();
+      
+      if (!name || !email) {
+        alert("Please fill out name and email.");
+        return;
+      }
+      
+      const subject = encodeURIComponent("Signing the AL-1.0 Open Letter");
+      const body = encodeURIComponent(
+        `Name: ${name}\n` +
+        `Email: ${email}\n` +
+        (title ? `Title/Role: ${title}\n` : '') +
+        `\nI support mandatory attribution logging (AL-1.0) for frontier AI models.\n\n` +
+        `https://github.com/rayfromboston/ai-source-engine`
+      );
+      
+      // Open user's mail client with prefilled message
+      window.location.href = `mailto:ray@rayfromboston.com?subject=${subject}&body=${body}`;
+      
+      // Optional: show thank you state
+      setTimeout(() => {
+        const form = document.getElementById('email-signup');
+        form.innerHTML = `
+          <div class="p-4 rounded-2xl bg-emerald-950 border border-emerald-900 text-emerald-300 text-sm">
+            Thank you. Your signature has been queued. Check your email client to send it.<br>
+            You can also sign publicly via GitHub PR.
+          </div>
+        `;
+      }, 600);
+    }
+    
+    function shareWithIdentity(type) {
+      let text = "";
+      
+      if (type === "creator") {
+        text = "AI is erasing my work and calling it innovation. AL-1.0 is a free solution that forces models to show where their outputs actually came from. I'm signing the open letter: https://github.com/rayfromboston/ai-source-engine";
+      } else if (type === "engineer") {
+        text = "Attribution logging is not impossible. AL-1.0 proves it can be done for <1% cost. Engineers should demand this becomes a baseline. https://github.com/rayfromboston/ai-source-engine";
+      } else {
+        text = "Civilization depends on knowing who built what. AI companies erased authorship on purpose. AL-1.0 is the fix. Regulators must mandate it. https://github.com/rayfromboston/ai-source-engine";
+      }
+      
+      const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+      window.open(url, '_blank');
+    }
+
+    function copyForInstagram() {
+      const text = "AI companies are erasing authorship and calling it progress. AL-1.0 is a free, open-source fix that produces mathematical receipts of influence. They lied when they said it was impossible. Sign the open letter: https://github.com/rayfromboston/ai-source-engine\n\n#StopAIStealing #AL10";
+      navigator.clipboard.writeText(text).then(() => {
+        const btns = document.querySelectorAll('button');
+        for (let b of btns) {
+          if (b.innerText.includes('Instagram')) {
+            const original = b.innerHTML;
+            b.innerHTML = '<i class="fas fa-check"></i> <span>Copied!</span>';
+            setTimeout(() => { b.innerHTML = original; }, 1800);
+            break;
+          }
+        }
+      });
+    }
+    
+    // Simple scroll behavior
+    document.addEventListener('DOMContentLoaded', () => {
+      tailwindInit();
+      
+      // Optional: highlight the sign section if someone arrives with #sign
+      if (window.location.hash === '#sign') {
+        const signEl = document.getElementById('sign');
+        if (signEl) {
+          signEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    });
+    
+    // Keyboard accessibility for sign button
+    document.addEventListener('keydown', function(e) {
+      if (e.key === "/" && document.activeElement.tagName === "BODY") {
+        const sign = document.getElementById('sign');
+        if (sign) {
+          e.preventDefault();
+          sign.scrollIntoView({ behavior: "smooth" });
+          const firstInput = sign.querySelector('input');
+          if (firstInput) firstInput.focus();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
