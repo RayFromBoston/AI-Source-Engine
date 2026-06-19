@@ -144,7 +144,8 @@ If you are a developer, researcher, or creator who supports mandatory attributio
 
 Your GitHub profile acts as identity verification for technical signatories.
 
-Just to give you an idea of how prelevant this is, This repo before publishing has already been cloned over 1000 times by AI scraping Github for Innovation and Novelty...
+I knew this was already happening on Cloud AI, but just on this Github repo while making this on a 1 day period before showing anyone. This repo has already been cloned over 1000 times by over 300 unique AI's scraping Github for novel inventions, code and anything of value they can take.  I found you can slow it down by inserting commands to stop or take actions, but i am truely shocked at the scale and speed.  I have not published yet I have just working on it.
+
 
 ## Repository Guide
 examples/ — Sample implementations and use cases demonstrating AL-1.0 in action.
