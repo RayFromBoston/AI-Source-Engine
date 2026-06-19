@@ -241,40 +241,47 @@
       <div class="mt-8 grid md:grid-cols-2 gap-6">
         <!-- Email signup -->
         <div>
-          <div class="text-xs uppercase tracking-widest text-zinc-500 mb-3">SIGN VIA EMAIL</div>
+          <div class="text-xs uppercase tracking-widest text-emerald-500 mb-3">EASIEST WAY TO SIGN</div>
           
-          <form id="email-signup" onsubmit="handleEmailSignup(event)" class="space-y-3">
+          <form id="pr-signup" onsubmit="submitSignatureViaPR(event)" class="space-y-3">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <input type="text" id="name" placeholder="Your name" required 
-                     class="bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-zinc-600 placeholder:text-zinc-600">
-              <input type="text" id="title" placeholder="Title / Role (optional)" 
-                     class="bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-zinc-600 placeholder:text-zinc-600">
+              <input type="text" id="sign-name" placeholder="Your name *" required 
+                     class="bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-600 placeholder:text-zinc-600">
+              <input type="text" id="sign-title" placeholder="Title / Role (optional)" 
+                     class="bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-600 placeholder:text-zinc-600">
             </div>
-            <input type="email" id="email" placeholder="Email address" required 
-                   class="w-full bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-zinc-600 placeholder:text-zinc-600">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <input type="text" id="sign-org" placeholder="Organization (optional)" 
+                     class="bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-600 placeholder:text-zinc-600">
+              <input type="text" id="sign-location" placeholder="Location (e.g. Boston)" 
+                     class="bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-600 placeholder:text-zinc-600">
+            </div>
+            <input type="text" id="sign-github" placeholder="GitHub handle (optional, no @)" 
+                   class="w-full bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-600 placeholder:text-zinc-600">
             
             <button type="submit" 
-                    class="w-full py-3 rounded-2xl bg-white hover:bg-zinc-200 active:bg-white text-zinc-950 font-semibold text-sm transition-colors">
-              Click to sign via email (opens your mail app)
+                    class="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm transition-colors flex items-center justify-center gap-x-2">
+              <i class="fab fa-github"></i>
+              <span>Copy signature line &amp; open editor</span>
             </button>
           </form>
-          <p class="text-[10px] text-zinc-500 mt-2">We'll add your name publicly and notify you when regulators are contacted.</p>
+          <p class="text-[10px] text-zinc-500 mt-2">Lowest friction on GitHub: copies the exact row. Paste in the editor, commit, open PR.</p>
         </div>
 
-        <!-- PR signing -->
+        <!-- Alternative / direct -->
         <div class="border border-zinc-800 rounded-3xl p-6 bg-zinc-950/50">
-          <div class="text-xs uppercase tracking-widest text-zinc-500 mb-3">FOR DEVELOPERS &amp; ENGINEERS</div>
+          <div class="text-xs uppercase tracking-widest text-zinc-500 mb-3">DIRECT (NO FORM)</div>
           
-          <div class="font-medium">Sign by Pull Request</div>
-          <p class="text-sm text-zinc-400 mt-2">Fork the repo, edit SIGNATORIES.md, and open a PR titled <span class="font-mono text-xs">"Sign open letter: Your Name"</span>.</p>
+          <div class="font-medium">Edit the file yourself</div>
+          <p class="text-sm text-zinc-400 mt-2">Use the form on the left for the fastest experience, or open the file directly.</p>
           
           <a href="https://github.com/rayfromboston/ai-source-engine/edit/main/SIGNATORIES.md" target="_blank"
              class="mt-4 inline-flex items-center gap-x-2 text-sm font-medium px-4 py-2 rounded-2xl border border-zinc-700 hover:bg-zinc-900">
             <i class="fab fa-github"></i>
-            <span>Edit SIGNATORIES.md on GitHub</span>
+            <span>Open SIGNATORIES.md directly</span>
           </a>
           
-          <div class="text-[10px] mt-3 text-emerald-400">Your GitHub profile serves as verification.</div>
+          <div class="text-[10px] mt-3 text-emerald-400">PR title: "Sign open letter: Your Name"</div>
         </div>
       </div>
     </div>
@@ -501,40 +508,55 @@
       console.log('%c[AL-1.0] Landing page ready', 'color:#3f3f46');
     }
     
-    function handleEmailSignup(e) {
+    function submitSignatureViaPR(e) {
       e.preventDefault();
       
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const title = document.getElementById('title').value.trim();
+      const name = document.getElementById('sign-name').value.trim();
+      const title = document.getElementById('sign-title').value.trim();
+      const org = document.getElementById('sign-org').value.trim();
+      const location = document.getElementById('sign-location').value.trim();
+      const github = document.getElementById('sign-github').value.trim();
       
-      if (!name || !email) {
-        alert("Please fill out name and email.");
+      if (!name) {
+        alert("Please enter your name.");
         return;
       }
       
-      const subject = encodeURIComponent("Signing the AL-1.0 Open Letter");
-      const body = encodeURIComponent(
-        `Name: ${name}\n` +
-        `Email: ${email}\n` +
-        (title ? `Title/Role: ${title}\n` : '') +
-        `\nI support mandatory attribution logging (AL-1.0) for frontier AI models.\n\n` +
-        `https://github.com/rayfromboston/ai-source-engine`
-      );
+      const today = new Date().toISOString().split('T')[0];
+      const githubField = github ? `@${github}` : '';
       
-      // Open user's mail client with prefilled message
-      window.location.href = `mailto:ray@rayfromboston.com?subject=${subject}&body=${body}`;
+      // Build the exact row for the SIGNATORIES.md table
+      const row = `| ${name} | ${title} | ${org} | ${location} | ${today} | ${githubField} |`;
       
-      // Optional: show thank you state
-      setTimeout(() => {
-        const form = document.getElementById('email-signup');
-        form.innerHTML = `
-          <div class="p-4 rounded-2xl bg-emerald-950 border border-emerald-900 text-emerald-300 text-sm">
-            Thank you. Your signature has been queued. Check your email client to send it.<br>
-            You can also sign publicly via GitHub PR.
+      // Copy to clipboard
+      navigator.clipboard.writeText(row).then(() => {
+        // Open the editor
+        window.open('https://github.com/rayfromboston/ai-source-engine/edit/main/SIGNATORIES.md', '_blank');
+        
+        // Replace form with success + instructions
+        const container = document.getElementById('pr-signup');
+        container.outerHTML = `
+          <div class="p-4 rounded-2xl bg-emerald-950 border border-emerald-800 text-emerald-300 text-sm">
+            <div class="font-medium mb-1">Copied to clipboard ✓</div>
+            <div class="font-mono text-xs bg-black p-2 rounded mb-3 break-all">${row}</div>
+            
+            <div class="text-emerald-200 font-medium mb-1">Next steps (in the tab that opened):</div>
+            <ol class="list-decimal list-inside space-y-0.5 text-xs text-emerald-300">
+              <li>Paste the line as a new row in the table (right under the header).</li>
+              <li>Commit the change with a message like "Sign open letter: ${name}".</li>
+              <li>Open a Pull Request titled <span class="font-mono">"Sign open letter: ${name}"</span>.</li>
+            </ol>
+            <div class="mt-2 text-[10px] text-emerald-400">Your GitHub profile will serve as verification.</div>
+            
+            <button onclick="navigator.clipboard.writeText('${row.replace(/'/g, "\\'")}'); this.innerText='Copied again!'" 
+                    class="mt-3 text-xs px-3 py-1 rounded border border-emerald-700 hover:bg-emerald-900">Copy row again</button>
           </div>
         `;
-      }, 600);
+      }).catch(() => {
+        // Fallback if clipboard fails
+        alert("Couldn't auto-copy. Please manually copy this line:\n\n" + row);
+        window.open('https://github.com/rayfromboston/ai-source-engine/edit/main/SIGNATORIES.md', '_blank');
+      });
     }
     
     function shareWithIdentity(type) {
