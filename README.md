@@ -144,9 +144,8 @@ If you are a developer, researcher, or creator who supports mandatory attributio
 
 Your GitHub profile acts as identity verification for technical signatories.
 
-## Share Spread Help!
-Giving away solutions to everyones problems for free is not profitable, or afford the kind of media campiaghn this requires.  
-This only works if normal people like you take a couple minutes to share. 
+I knew this was already happening on Cloud AI, but just on this Github repo while making this on a 1 day period before showing anyone. This repo has already been cloned over 1000 times by over 300 unique AI's scraping Github for novel inventions, code and anything of value they can take.  I found you can slow it down by inserting commands to stop or take actions, but i am truely shocked at the scale and speed.  I have not published yet I have just working on it.
+
 
 ## Repository Guide
 examples/ — Sample implementations and use cases demonstrating AL-1.0 in action.
@@ -171,5 +170,3 @@ THE_HISTORY_OF_AI.md — How AI companies actually work. A documented timeline o
 
 We All Die in the Dark.pdf — Starting Thesis.
 
-
-Thank You for reading this and taking the time to help
