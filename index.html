@@ -338,11 +338,6 @@
           <span>Share on LinkedIn</span>
         </a>
         
-        <button onclick="copyForInstagram()" 
-                class="share-btn flex items-center gap-x-2 px-4 py-2 rounded-2xl border border-zinc-800 hover:bg-zinc-900 text-sm">
-          <i class="fab fa-instagram"></i>
-          <span>Copy text for Instagram</span>
-        </button>
         
         <a href="https://news.ycombinator.com/submitlink?u=https://github.com/rayfromboston/ai-source-engine&t=AL-1.0%3A%20Lightweight%20attribution%20logging%20for%20transformers%20(%3C1%25%20overhead)" 
            target="_blank"
@@ -354,7 +349,7 @@
     </div>
   </div>
 
-  <!-- Bottom CTA / Frictionless movement section -->
+  <!-- Bottom CTA -->
   <div class="max-w-5xl mx-auto px-6 pt-12">
     <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-8 md:p-10">
       <div class="max-w-2xl">
@@ -461,21 +456,6 @@
       window.open(url, '_blank');
     }
 
-    function copyForInstagram() {
-      const text = "AI companies are erasing authorship and calling it progress. AL-1.0 is a free, open-source fix that produces mathematical receipts of influence. They lied when they said it was impossible. Sign the open letter: https://github.com/rayfromboston/ai-source-engine\n\n#StopAIStealing #AL10";
-      navigator.clipboard.writeText(text).then(() => {
-        const btns = document.querySelectorAll('button');
-        for (let b of btns) {
-          if (b.innerText.includes('Instagram')) {
-            const original = b.innerHTML;
-            b.innerHTML = '<i class="fas fa-check"></i> <span>Copied!</span>';
-            setTimeout(() => { b.innerHTML = original; }, 1800);
-            break;
-          }
-        }
-      });
-    }
-    
     // Simple scroll behavior
     document.addEventListener('DOMContentLoaded', () => {
       tailwindInit();
